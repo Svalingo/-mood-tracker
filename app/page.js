@@ -5,7 +5,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, Area
 
 const i18n = {
   zh: {
-    title: '心境追踪', subtitle: '双相障碍情绪与生理数据分析',
+    title: '我们不判断，只陪你一起看见自己的情绪波动', subtitle: '',
     login: '登录', register: '注册', logout: '退出登录', email: '邮箱', password: '密码',
     loginBtn: '登录', registerBtn: '注册', switchToRegister: '没有账号？注册', switchToLogin: '已有账号？登录',
     tabs: { input: '📝 记录', analysis: '🔍 分析', trends: '📊 趋势' },
@@ -17,12 +17,12 @@ const i18n = {
     medication: '💊 用药记录', medPlaceholder: '记录今天的用药情况，如：碳酸锂 300mg 早晚各一次',
     medTaken: '已按时服药', submit: '提交并分析', submitNoApi: '📋 记录并生成对话提示',
     noApiHint: '未配置 API，提交后将生成对话提示', saving: '保存中...', analyzing: 'AI 正在分析...',
-    saved: '✨ 记录已保存', copyHint: '💬 复制下面的内容，发送给 Claude 进行对话分析',
+    saved: '✨ 记录已保存', copyHint: '💬 复制下面的内容，发送给你信赖的大模型进行对话分析',
     copy: '📋 复制到剪贴板', copied: '已复制！', viewTrends: '查看趋势',
     status: '当前状态', summary: '📋 摘要', analysis: '🔍 详细分析', 
     warnings: '⚠️ 注意事项', suggestions: '💡 建议',
     waiting: '等待分析', twoMethods: '两种分析方式',
-    method1: '💬 方式一：与 Claude 对话', method1Desc: '提交记录后，复制生成的提示词进行对话分析',
+    method1: '💬 方式一：与你所信赖的大模型对话', method1Desc: '提交记录后，复制生成的提示词进行对话分析',
     method2: '⚡ 方式二：自动 API 分析', method2Desc: '配置 API Key 后，获得即时分析结果',
     trendsTitle: '📈 情绪与生理指标趋势', noData: '暂无数据，开始记录后这里将显示趋势图表',
     moodTrend: '情绪评分', sleepHrv: '睡眠 & HRV', sleepHRRange: '睡眠心率范围',
@@ -35,11 +35,11 @@ const i18n = {
     registerSuccess: '注册成功！', loading: '加载中...',
     apiSettings: '⚙️ API 设置', provider: '选择 API 服务商', apiKey: 'API Key',
     apiKeyPlaceholder: '输入你的 API Key', model: '模型', apiUrl: 'API 地址',
-    configured: '已配置', notConfigured: '⚠️ 未配置 API Key 时，可复制提示词与 Claude 对话',
+    configured: '已配置', notConfigured: '⚠️ 未配置 API Key 时，可复制提示词与大模型对话',
     done: '完成', configApi: '⚙️ 配置 API'
   },
   en: {
-    title: 'Mood Tracker', subtitle: 'Bipolar Disorder Emotion & Physiological Data Analysis',
+    title: 'We don\'t judge. We just help you see your emotional waves.', subtitle: '',
     login: 'Login', register: 'Register', logout: 'Logout', email: 'Email', password: 'Password',
     loginBtn: 'Login', registerBtn: 'Register', switchToRegister: 'No account? Register', switchToLogin: 'Have account? Login',
     tabs: { input: '📝 Record', analysis: '🔍 Analysis', trends: '📊 Trends' },
@@ -51,12 +51,12 @@ const i18n = {
     medication: '💊 Medication Log', medPlaceholder: 'Record today\'s medication, e.g.: Lithium 300mg twice daily',
     medTaken: 'Medication taken as scheduled', submit: 'Submit & Analyze', submitNoApi: '📋 Record & Generate Prompt',
     noApiHint: 'No API configured. A prompt will be generated.', saving: 'Saving...', analyzing: 'AI analyzing...',
-    saved: '✨ Record Saved', copyHint: '💬 Copy the content below and send it to Claude for analysis',
+    saved: '✨ Record Saved', copyHint: '💬 Copy and send to your trusted AI for analysis',
     copy: '📋 Copy to Clipboard', copied: 'Copied!', viewTrends: 'View Trends',
     status: 'Current Status', summary: '📋 Summary', analysis: '🔍 Detailed Analysis',
     warnings: '⚠️ Warnings', suggestions: '💡 Suggestions',
     waiting: 'Waiting for analysis', twoMethods: 'Two Analysis Methods',
-    method1: '💬 Method 1: Chat with Claude', method1Desc: 'Copy the generated prompt for conversation analysis',
+    method1: '💬 Method 1: Chat with your trusted AI', method1Desc: 'Copy the generated prompt for conversation analysis',
     method2: '⚡ Method 2: Auto API Analysis', method2Desc: 'Configure API Key for instant analysis',
     trendsTitle: '📈 Mood & Physiological Trends', noData: 'No data yet. Trends will appear after you start recording.',
     moodTrend: 'Mood Score', sleepHrv: 'Sleep & HRV', sleepHRRange: 'Sleep HR Range',
@@ -69,7 +69,7 @@ const i18n = {
     registerSuccess: 'Registered!', loading: 'Loading...',
     apiSettings: '⚙️ API Settings', provider: 'Select API Provider', apiKey: 'API Key',
     apiKeyPlaceholder: 'Enter your API Key', model: 'Model', apiUrl: 'API URL',
-    configured: 'Configured', notConfigured: '⚠️ Without API Key, you can copy prompts to chat with Claude',
+    configured: 'Configured', notConfigured: '⚠️ Without API Key, you can copy prompts to chat with AI',
     done: 'Done', configApi: '⚙️ Configure API'
   }
 }
@@ -393,15 +393,14 @@ Please analyze mood state, physiological correlations, medication adherence, tre
   if (!user) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-        <div style={{ width: '100%', maxWidth: 400 }}>
+        <div style={{ width: '100%', maxWidth: 420 }}>
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
               <button onClick={toggleLang} style={{ padding: '6px 12px', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 8, color: '#7c3aed', fontSize: 12, cursor: 'pointer' }}>
                 {lang === 'zh' ? 'EN' : '中文'}
               </button>
             </div>
-            <h1 style={{ fontSize: 28, fontWeight: 600, marginBottom: 8, background: 'linear-gradient(90deg,#8b5cf6,#ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t.title}</h1>
-            <p style={{ fontSize: 14, color: '#64748b' }}>{t.subtitle}</p>
+            <h1 style={{ fontSize: 20, fontWeight: 300, marginBottom: 8, lineHeight: 1.8, fontFamily: '"ZCOOL XiaoWei", "Ma Shan Zheng", "ZCOOL QingKe HuangYou", "Noto Serif SC", serif', background: 'linear-gradient(135deg,#8b5cf6 0%,#ec4899 50%,#f472b6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '0.05em' }}>{t.title}</h1>
           </div>
           
           <div style={cardStyle}>
@@ -439,15 +438,14 @@ Please analyze mood state, physiological correlations, medication adherence, tre
         
         {/* Header */}
         <header style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <span style={{ fontSize: 12, color: '#64748b' }}>{user.email}</span>
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={toggleLang} style={{ padding: '6px 12px', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 8, color: '#7c3aed', fontSize: 12, cursor: 'pointer' }}>{lang === 'zh' ? 'EN' : '中文'}</button>
               <button onClick={handleLogout} style={{ padding: '6px 12px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, color: '#dc2626', fontSize: 12, cursor: 'pointer' }}>{t.logout}</button>
             </div>
           </div>
-          <h1 style={{ fontSize: 28, fontWeight: 600, letterSpacing: '0.05em', marginBottom: 8, background: 'linear-gradient(90deg,#8b5cf6,#ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t.title}</h1>
-          <p style={{ fontSize: 14, color: '#64748b' }}>{t.subtitle}</p>
+          <h1 style={{ fontSize: 18, fontWeight: 300, letterSpacing: '0.03em', lineHeight: 1.8, marginBottom: 8, fontFamily: '"ZCOOL XiaoWei", "Ma Shan Zheng", "ZCOOL QingKe HuangYou", "Noto Serif SC", serif', background: 'linear-gradient(135deg,#8b5cf6 0%,#ec4899 50%,#f472b6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t.title}</h1>
         </header>
 
         {/* Navigation */}
