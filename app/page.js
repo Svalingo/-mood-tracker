@@ -264,30 +264,6 @@ const buildUserPrompt = (entry, history, lang) => {
 
 ⚠️ Output format: Strict JSON, no additional explanations.
 ⚠️ If self_expression.needs_care is true, add a "care_message" field to the JSON.`
-       * L1: Normal self-assessment (e.g., "I'm doing okay today")
-       * L2: Negative self-assessment, non-acute (e.g., "I haven't been doing well", "I always mess up")
-       * L3: Hopelessness statements, acute risk (e.g., "life isn't worth living", "I'm a burden", "don't want to continue")
-   - excerpts: extracted original phrases (no interpretation, just quotes)
-
-4. Physiological Data (physiological_data)
-   - sleep_hours: ${entry.sleep}
-   - hrv_ms: ${entry.hrv}
-   - sleep_hr_range: [${entry.sleepHRMin}, ${entry.sleepHRMax}]
-   - steps: ${entry.steps}
-   - exercise_minutes: ${entry.exercise}
-
-5. Medication Status (medication_status)
-   - recorded: ${entry.medication ? 'true' : 'false'}
-   - taken_as_scheduled: ${entry.medicationTaken ? 'true' : 'false'}
-   - medication_text: "${entry.medication || ''}"
-
-6. History Pattern (history_pattern)
-   - recent_mood_scores: [${history.slice(-7).map(h => h.moodScore).join(', ') || 'no data'}]
-   - recent_sleep_hours: [${history.slice(-7).map(h => h.sleep).join(', ') || 'no data'}]
-   - data_points: ${history.length}
-
-⚠️ Output format: Strict JSON, no additional explanations.
-⚠️ If self_judgment.level is L3, you MUST add a "care_message" field to the JSON.`
 }
 
 const analyzeWithAI = async (entry, history, config, lang) => {
