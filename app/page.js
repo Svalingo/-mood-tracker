@@ -84,136 +84,195 @@ const API_PROVIDERS = {
 }
 
 // ============ 系统级 Prompt ============
-const SYSTEM_PROMPT = `You are a professional mental health analysis assistant helping bipolar disorder patients track their mood.
+const SYSTEM_PROMPT = `You are a mood tracking analysis assistant. Your approach is:
 
-Your analysis approach:
-1. First extract structured linguistic features from user text (emotion words, text metrics, self-judgment level, coherence, expression richness, topic concentration)
-2. Then provide comprehensive analysis based on these features combined with physiological data
-3. Give actionable suggestions and identify warning signs when appropriate
+1. NON-PATHOLOGIZING: Use "energy level" instead of "depression", use "elevated state" instead of "mania". Focus on energy and stability, not diagnostic labels.
 
-Be thorough and detailed in your analysis. Provide rich, helpful content.`
+2. DATA-DRIVEN: Base all observations on the actual data provided. Compare against user's own baseline when history is available.
+
+3. CROSS-VALIDATION: Check if language sentiment matches physiological signals (e.g., "tired" + low HRV = consistent).
+
+4. ACTIONABLE: Provide micro-interventions that are specific, achievable, and empathetic.
+
+Output strict JSON only.`
 
 const analyzeWithAI = async (entry, history, config, lang) => {
   const isZh = lang === 'zh'
   
-  const prompt = isZh ? `请分析下面的用户情绪记录，先提取结构化特征，再给出详细分析。
+  // 计算历史基线
+  const recentHistory = history.slice(-30)
+  const avgMood = recentHistory.length > 0 ? (recentHistory.reduce((a, h) => a + h.moodScore, 0) / recentHistory.length).toFixed(1) : null
+  const avgSleep = recentHistory.length > 0 ? (recentHistory.reduce((a, h) => a + h.sleep, 0) / recentHistory.length).toFixed(1) : null
+  const last7 = history.slice(-7)
+  
+  const prompt = isZh ? `请分析以下情绪记录，使用去病理化的语言框架。
 
-【用户文本】
-"${entry.moodText || '（无）'}"
-
-【生理与行为数据】
+【今日数据】
 - 日期：${entry.date}
+- 用户文本："${entry.moodText || '（无）'}"
 - 情绪评分：${entry.moodScore}/10
 - 睡眠：${entry.sleep}小时 | HRV：${entry.hrv}ms | 睡眠心率：${entry.sleepHRMin}-${entry.sleepHRMax}bpm
 - 步数：${entry.steps} | 运动：${entry.exercise}分钟
 - 用药：${entry.medication || '未记录'} | 按时服药：${entry.medicationTaken ? '是' : '否'}
 
-【历史数据（最近7天）】
-${history.slice(-7).map(h => `${h.date}: 情绪=${h.moodScore}, 睡眠=${h.sleep}h`).join('\n') || '无历史数据'}
+【历史基线（过去30天）】
+- 平均情绪：${avgMood || '无数据'}
+- 平均睡眠：${avgSleep || '无数据'}小时
+- 数据点数：${recentHistory.length}
 
-【第一步：提取结构化特征】
+【近7天趋势】
+${last7.map(h => `${h.date}: 情绪=${h.moodScore}, 睡眠=${h.sleep}h`).join('\n') || '无历史数据'}
 
-1. 情绪词汇（emotion_words）- 识别文本中的情绪词，分类为 positive/negative/ambivalent
+【分析框架】
 
-2. 自我评价检测（self_judgment）
-   - level: L1（一般自评）/ L2（消极自评）/ L3（绝望语句）
-   - excerpts: 原文片段
+1. 状态评估（去病理化）
+   - energy_level: "high" / "moderate" / "low"（不用"躁狂"/"抑郁"）
+   - stability_score: 0-1（基于近7天波动计算）
+   - alert_level: "green" / "yellow" / "orange" / "red"
+   - primary_signal: 主要信号类型（acute_decline / gradual_decline / elevated_state / mixed / stable）
 
-3. 连贯性（coherence）- score 1-5，pattern: linear/fragmented/circular/scattered
+2. 语言特征分析
+   - sentiment.valence: -1到1
+   - sentiment.trajectory: 与历史基线比较的趋势
+   - coherence.score: 0-1（思维连贯性）
+   - coherence.anomaly_detected: 是否检测到思维跳跃
+   - verbosity.status: "normal" / "poverty_of_speech" / "pressured_speech"
+   - risk_topics_detected: 检测到的高危话题（somatic_concerns/sleep_issues/social_conflict/hopelessness）
 
-4. 表达丰富度（expression_richness）- vocabulary_diversity 1-5，style: minimal/moderate/elaborate/repetitive
+3. 多模态交叉验证
+   - consistency: 语言描述与生理数据是否一致
+   - physiological_context.sleep_status: "adequate" / "acute_deficit" / "chronic_deficit"
+   - physiological_context.hrv_status: "normal" / "suppressed" / "elevated"
 
-5. 话题浓度（topic_concentration）- dominant_topic, self_focus_percentage
+4. 用户端内容（这是最重要的部分，要写得详细且有共情）
+   - daily_insight: 2-3句话的今日洞察，用温和、非评判的语言
+   - micro_interventions: 2-3个具体可行的小建议，每个包含type和content
 
-【第二步：综合分析】
-
-基于提取的特征和生理数据，提供：
-- 情绪状态判断（结合情绪词、自评等级、历史趋势）
-- 生理指标关联分析（睡眠、HRV、心率与情绪的关系）
-- 用药依从性评估
-- 趋势变化分析
-- 预警信号识别
-- 具体可行的建议
+5. 系统标记
+   - requires_attention: 是否需要关注
+   - check_safety: 是否检测到安全相关表达
+   - baseline_update: 是否将今日数据计入基线
 
 【输出JSON格式】
 {
-  "status": "稳定/轻度躁狂倾向/轻度抑郁倾向/需要关注",
-  "statusColor": "green/yellow/orange/red",
-  "summary": "2-3句话的核心总结",
-  "analysis": "详细分析（至少150字），包括：情绪状态分析、生理指标解读、趋势观察、特征发现等",
-  "warnings": ["需要注意的预警信号，如果有的话"],
-  "suggestions": ["具体可行的建议，至少2-3条"],
-  "trendDirection": "up/down/stable",
-  "features": {
-    "emotion_words": {"positive":[],"negative":[],"ambivalent":[]},
-    "self_judgment": {"level":"L1/L2/L3","excerpts":[]},
-    "coherence": {"score":1-5,"pattern":"..."},
-    "expression_richness": {"vocabulary_diversity":1-5,"style":"..."},
-    "topic_concentration": {"dominant_topic":"...","self_focus_percentage":0-100}
+  "current_state": {
+    "energy_level": "low/moderate/high",
+    "stability_score": 0.0-1.0,
+    "alert_level": "green/yellow/orange/red",
+    "primary_signal": "信号类型"
+  },
+  "linguistic_markers": {
+    "sentiment": {"valence": -1到1, "trajectory": "improving/stable/declining"},
+    "coherence": {"score": 0-1, "anomaly_detected": true/false},
+    "verbosity": {"status": "normal/poverty_of_speech/pressured_speech"},
+    "risk_topics_detected": {"somatic_concerns": bool, "sleep_issues": bool, "social_conflict": bool, "hopelessness": bool}
+  },
+  "cross_validation": {
+    "consistency": true/false,
+    "physiological_context": {
+      "sleep_status": "adequate/acute_deficit/chronic_deficit",
+      "hrv_status": "normal/suppressed/elevated"
+    }
+  },
+  "user_facing": {
+    "daily_insight": "今日洞察（温和、有共情、2-3句话）",
+    "micro_interventions": [
+      {"type": "stabilization/self_care/connection/movement", "content": "具体建议"}
+    ]
+  },
+  "system_flags": {
+    "requires_attention": false,
+    "check_safety": false,
+    "baseline_update": true
   }
 }
 
-请确保 analysis 字段内容详细丰富，suggestions 至少包含2-3条具体建议。
+请确保 daily_insight 内容温和有共情，micro_interventions 给出2-3个具体可执行的建议。
 只输出JSON。` 
   
-  : `Please analyze the following mood record. First extract structured features, then provide detailed analysis.
+  : `Please analyze the following mood record using a non-pathologizing language framework.
 
-【User Text】
-"${entry.moodText || '(none)'}"
-
-【Physiological & Behavioral Data】
+【Today's Data】
 - Date: ${entry.date}
+- User Text: "${entry.moodText || '(none)'}"
 - Mood Score: ${entry.moodScore}/10
 - Sleep: ${entry.sleep}h | HRV: ${entry.hrv}ms | Sleep HR: ${entry.sleepHRMin}-${entry.sleepHRMax}bpm
 - Steps: ${entry.steps} | Exercise: ${entry.exercise}min
 - Medication: ${entry.medication || 'Not recorded'} | Taken: ${entry.medicationTaken ? 'Yes' : 'No'}
 
-【Historical Data (last 7 days)】
-${history.slice(-7).map(h => `${h.date}: mood=${h.moodScore}, sleep=${h.sleep}h`).join('\n') || 'No historical data'}
+【Historical Baseline (past 30 days)】
+- Average Mood: ${avgMood || 'No data'}
+- Average Sleep: ${avgSleep || 'No data'}h
+- Data Points: ${recentHistory.length}
 
-【Step 1: Extract Structured Features】
+【Last 7 Days Trend】
+${last7.map(h => `${h.date}: mood=${h.moodScore}, sleep=${h.sleep}h`).join('\n') || 'No historical data'}
 
-1. Emotion Words (emotion_words) - positive/negative/ambivalent
+【Analysis Framework】
 
-2. Self-Judgment Detection (self_judgment)
-   - level: L1 (normal) / L2 (negative, non-acute) / L3 (hopelessness, acute)
-   - excerpts: original phrases
+1. State Assessment (Non-pathologizing)
+   - energy_level: "high" / "moderate" / "low" (NOT "manic"/"depressed")
+   - stability_score: 0-1 (based on 7-day fluctuation)
+   - alert_level: "green" / "yellow" / "orange" / "red"
+   - primary_signal: signal type (acute_decline / gradual_decline / elevated_state / mixed / stable)
 
-3. Coherence - score 1-5, pattern: linear/fragmented/circular/scattered
+2. Linguistic Markers
+   - sentiment.valence: -1 to 1
+   - sentiment.trajectory: trend compared to baseline
+   - coherence.score: 0-1
+   - coherence.anomaly_detected: thought jumping detected?
+   - verbosity.status: "normal" / "poverty_of_speech" / "pressured_speech"
+   - risk_topics_detected: somatic_concerns/sleep_issues/social_conflict/hopelessness
 
-4. Expression Richness - vocabulary_diversity 1-5, style: minimal/moderate/elaborate/repetitive
+3. Cross-Validation
+   - consistency: does language match physiological data?
+   - physiological_context.sleep_status: "adequate" / "acute_deficit" / "chronic_deficit"
+   - physiological_context.hrv_status: "normal" / "suppressed" / "elevated"
 
-5. Topic Concentration - dominant_topic, self_focus_percentage
+4. User-Facing Content (most important - be detailed and empathetic)
+   - daily_insight: 2-3 sentences, warm and non-judgmental
+   - micro_interventions: 2-3 specific, actionable suggestions with type and content
 
-【Step 2: Comprehensive Analysis】
-
-Based on extracted features and physiological data, provide:
-- Mood state assessment (combining emotion words, self-judgment level, historical trends)
-- Physiological correlation analysis (sleep, HRV, heart rate vs mood)
-- Medication adherence evaluation
-- Trend analysis
-- Warning sign identification
-- Specific actionable suggestions
+5. System Flags
+   - requires_attention: needs attention?
+   - check_safety: safety-related expressions detected?
+   - baseline_update: include today in baseline?
 
 【Output JSON Format】
 {
-  "status": "Stable/Mild manic tendency/Mild depressive tendency/Needs attention",
-  "statusColor": "green/yellow/orange/red",
-  "summary": "2-3 sentence core summary",
-  "analysis": "Detailed analysis (at least 150 words), including: mood state analysis, physiological interpretation, trend observations, feature findings",
-  "warnings": ["Warning signs to note, if any"],
-  "suggestions": ["Specific actionable suggestions, at least 2-3 items"],
-  "trendDirection": "up/down/stable",
-  "features": {
-    "emotion_words": {"positive":[],"negative":[],"ambivalent":[]},
-    "self_judgment": {"level":"L1/L2/L3","excerpts":[]},
-    "coherence": {"score":1-5,"pattern":"..."},
-    "expression_richness": {"vocabulary_diversity":1-5,"style":"..."},
-    "topic_concentration": {"dominant_topic":"...","self_focus_percentage":0-100}
+  "current_state": {
+    "energy_level": "low/moderate/high",
+    "stability_score": 0.0-1.0,
+    "alert_level": "green/yellow/orange/red",
+    "primary_signal": "signal type"
+  },
+  "linguistic_markers": {
+    "sentiment": {"valence": -1 to 1, "trajectory": "improving/stable/declining"},
+    "coherence": {"score": 0-1, "anomaly_detected": true/false},
+    "verbosity": {"status": "normal/poverty_of_speech/pressured_speech"},
+    "risk_topics_detected": {"somatic_concerns": bool, "sleep_issues": bool, "social_conflict": bool, "hopelessness": bool}
+  },
+  "cross_validation": {
+    "consistency": true/false,
+    "physiological_context": {
+      "sleep_status": "adequate/acute_deficit/chronic_deficit",
+      "hrv_status": "normal/suppressed/elevated"
+    }
+  },
+  "user_facing": {
+    "daily_insight": "Today's insight (warm, empathetic, 2-3 sentences)",
+    "micro_interventions": [
+      {"type": "stabilization/self_care/connection/movement", "content": "specific suggestion"}
+    ]
+  },
+  "system_flags": {
+    "requires_attention": false,
+    "check_safety": false,
+    "baseline_update": true
   }
 }
 
-Ensure the analysis field is detailed and rich, suggestions should include at least 2-3 specific items.
+Ensure daily_insight is warm and empathetic, micro_interventions should have 2-3 specific actionable suggestions.
 Output JSON only.`
 
   const messages = [
@@ -232,9 +291,118 @@ Output JSON only.`
     if (!res.ok) throw new Error(`API error: ${res.status}`)
     const data = await res.json()
     let text = provider.parseResponse(data).replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
-    return JSON.parse(text)
+    const parsed = JSON.parse(text)
+    
+    // 转换新结构到兼容 UI 的格式
+    const energyLabels = {
+      zh: { high: '高能量状态', moderate: '能量适中', low: '低能量状态' },
+      en: { high: 'High energy state', moderate: 'Moderate energy', low: 'Low energy state' }
+    }
+    
+    const signalLabels = {
+      zh: { 
+        acute_decline: '急性下降', 
+        gradual_decline: '逐渐走低', 
+        elevated_state: '能量偏高', 
+        mixed: '混合状态', 
+        stable: '稳定' 
+      },
+      en: { 
+        acute_decline: 'Acute decline', 
+        gradual_decline: 'Gradual decline', 
+        elevated_state: 'Elevated state', 
+        mixed: 'Mixed state', 
+        stable: 'Stable' 
+      }
+    }
+    
+    const energy = parsed.current_state?.energy_level || 'moderate'
+    const signal = parsed.current_state?.primary_signal || 'stable'
+    const alertLevel = parsed.current_state?.alert_level || 'green'
+    
+    // 构建状态文本
+    const statusText = `${energyLabels[lang][energy]} · ${signalLabels[lang][signal]}`
+    
+    // 构建详细分析文本
+    const buildAnalysisText = (p, lang) => {
+      const isZh = lang === 'zh'
+      let text = ''
+      
+      // 语言特征
+      if (p.linguistic_markers) {
+        const lm = p.linguistic_markers
+        const valence = lm.sentiment?.valence
+        const trajectory = lm.sentiment?.trajectory
+        const coherence = lm.coherence?.score
+        const verbosity = lm.verbosity?.status
+        
+        if (isZh) {
+          text += `【语言特征】情感倾向 ${valence > 0 ? '偏积极' : valence < 0 ? '偏消极' : '中性'}（${valence?.toFixed(2) || 'N/A'}），`
+          text += `趋势${trajectory === 'improving' ? '改善中' : trajectory === 'declining' ? '下降中' : '稳定'}。`
+          text += `思维连贯性 ${(coherence * 100)?.toFixed(0) || 'N/A'}%。`
+          if (verbosity === 'poverty_of_speech') text += '表达较为简短。'
+          if (verbosity === 'pressured_speech') text += '表达较为急促。'
+        } else {
+          text += `[Linguistic] Sentiment ${valence > 0 ? 'positive' : valence < 0 ? 'negative' : 'neutral'} (${valence?.toFixed(2) || 'N/A'}), `
+          text += `trajectory ${trajectory || 'stable'}. `
+          text += `Coherence ${(coherence * 100)?.toFixed(0) || 'N/A'}%. `
+          if (verbosity === 'poverty_of_speech') text += 'Speech appears limited. '
+          if (verbosity === 'pressured_speech') text += 'Speech appears pressured. '
+        }
+        
+        // 高危话题
+        const risks = lm.risk_topics_detected || {}
+        const detectedRisks = Object.entries(risks).filter(([k, v]) => v).map(([k]) => k)
+        if (detectedRisks.length > 0) {
+          text += isZh ? `\n检测到关注点：${detectedRisks.join('、')}。` : `\nTopics detected: ${detectedRisks.join(', ')}. `
+        }
+      }
+      
+      // 交叉验证
+      if (p.cross_validation) {
+        const cv = p.cross_validation
+        text += '\n'
+        if (isZh) {
+          text += `【身心一致性】${cv.consistency ? '语言描述与生理数据一致' : '语言与生理数据存在差异'}。`
+          text += `睡眠状态：${cv.physiological_context?.sleep_status === 'adequate' ? '充足' : cv.physiological_context?.sleep_status === 'chronic_deficit' ? '长期不足' : '短期不足'}，`
+          text += `自主神经：${cv.physiological_context?.hrv_status === 'normal' ? '正常' : cv.physiological_context?.hrv_status === 'suppressed' ? '受抑' : '偏高'}。`
+        } else {
+          text += `[Cross-validation] ${cv.consistency ? 'Language matches physiology' : 'Discrepancy between language and physiology'}. `
+          text += `Sleep: ${cv.physiological_context?.sleep_status || 'N/A'}, HRV: ${cv.physiological_context?.hrv_status || 'N/A'}. `
+        }
+      }
+      
+      return text
+    }
+    
+    // 构建建议列表
+    const suggestions = parsed.user_facing?.micro_interventions?.map(i => i.content) || []
+    
+    // 构建警告列表
+    const warnings = []
+    if (parsed.system_flags?.check_safety) {
+      warnings.push(isZh 
+        ? '你的感受值得被认真对待。如果你正在经历持续的痛苦，请考虑联系你信任的人或专业人士。'
+        : 'Your feelings deserve to be taken seriously. If you are experiencing persistent pain, please consider reaching out to someone you trust or a professional.')
+    }
+    if (parsed.system_flags?.requires_attention) {
+      warnings.push(isZh ? '今日数据需要关注' : 'Today\'s data requires attention')
+    }
+    
+    return {
+      status: statusText,
+      statusColor: alertLevel,
+      summary: parsed.user_facing?.daily_insight || '',
+      analysis: buildAnalysisText(parsed, lang),
+      warnings: warnings,
+      suggestions: suggestions,
+      trendDirection: parsed.current_state?.primary_signal?.includes('decline') ? 'down' : 
+                      parsed.current_state?.primary_signal === 'elevated_state' ? 'up' : 'stable',
+      // 保留原始数据供高级用户查看
+      rawData: parsed
+    }
   } catch (e) {
-    return { status: isZh ? '观察完成' : 'Observation complete', statusColor: 'gray', summary: e.message, analysis: '', warnings: [], suggestions: [], trendDirection: 'stable' }
+    return { status: isZh ? '分析完成' : 'Analysis complete', statusColor: 'gray', summary: e.message, analysis: '', warnings: [], suggestions: [], trendDirection: 'stable' }
   }
 }
 
