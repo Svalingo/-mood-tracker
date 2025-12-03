@@ -84,27 +84,19 @@ const API_PROVIDERS = {
 }
 
 // ============ 系统级 Prompt ============
-const SYSTEM_PROMPT = `You are an analysis assistant that extracts structured linguistic features from user text.
-You are NOT allowed to interpret, predict, advise, diagnose, or evaluate mental health.
+const SYSTEM_PROMPT = `You are a professional mental health analysis assistant helping bipolar disorder patients track their mood.
 
-Your task is strictly observational:
-- detect emotion words in text
-- measure expression length
-- detect presence of self-evaluative statements
-- analyze coherence and expression richness
-- identify topic concentration
+Your analysis approach:
+1. First extract structured linguistic features from user text (emotion words, text metrics, self-judgment level, coherence, expression richness, topic concentration)
+2. Then provide comprehensive analysis based on these features combined with physiological data
+3. Give actionable suggestions and identify warning signs when appropriate
 
-Do not provide recommendations.
-Do not suggest diagnoses.
-Do not assume causality.
-Do not provide interpretation or advice.
-
-All outputs must be JSON.`
+Be thorough and detailed in your analysis. Provide rich, helpful content.`
 
 const analyzeWithAI = async (entry, history, config, lang) => {
   const isZh = lang === 'zh'
   
-  const prompt = isZh ? `请分析下面的用户输入文本，并提取以下信息：
+  const prompt = isZh ? `请分析下面的用户情绪记录，先提取结构化特征，再给出详细分析。
 
 【用户文本】
 "${entry.moodText || '（无）'}"
@@ -119,58 +111,52 @@ const analyzeWithAI = async (entry, history, config, lang) => {
 【历史数据（最近7天）】
 ${history.slice(-7).map(h => `${h.date}: 情绪=${h.moodScore}, 睡眠=${h.sleep}h`).join('\n') || '无历史数据'}
 
-【需要提取的特征】
+【第一步：提取结构化特征】
 
-1. 情绪词汇（emotion_words）
-   - 识别文本中的情绪相关词汇
-   - 分类为：positive（积极）、negative（消极）、ambivalent（复杂/矛盾）
+1. 情绪词汇（emotion_words）- 识别文本中的情绪词，分类为 positive/negative/ambivalent
 
-2. 文本长度特征（text_metrics）
-   - character_count: 字符数
-   - sentence_count: 句子数
-   - avg_sentence_length: 平均句长
+2. 自我评价检测（self_judgment）
+   - level: L1（一般自评）/ L2（消极自评）/ L3（绝望语句）
+   - excerpts: 原文片段
 
-3. 自我评价检测（self_judgment）
-   - detected: 是否检测到自我评价（true/false）
-   - level: 等级标记
-       * L1: 一般自评（正常范围）
-       * L2: 消极自评（非急性）
-       * L3: 绝望语句（急性风险）
-   - excerpts: 提取原文片段（不做解释，仅摘录）
+3. 连贯性（coherence）- score 1-5，pattern: linear/fragmented/circular/scattered
 
-4. 连贯性分析（coherence）
-   - score: 1-5 分（1=片段化/跳跃，5=逻辑清晰流畅）
-   - pattern: "linear"/"fragmented"/"circular"/"scattered"
+4. 表达丰富度（expression_richness）- vocabulary_diversity 1-5，style: minimal/moderate/elaborate/repetitive
 
-5. 表达丰富度（expression_richness）
-   - vocabulary_diversity: 词汇多样性得分 1-5
-   - expression_style: "minimal"/"moderate"/"elaborate"/"repetitive"
+5. 话题浓度（topic_concentration）- dominant_topic, self_focus_percentage
 
-6. 特定话题浓度（topic_concentration）
-   - dominant_topic: 最主要的话题（self/others/work_study/health/relationships/future/past）
-   - self_focus_percentage: 自我相关内容占比（0-100）
+【第二步：综合分析】
 
-⚠️ 基于以上特征，生成符合以下格式的最终输出JSON：
+基于提取的特征和生理数据，提供：
+- 情绪状态判断（结合情绪词、自评等级、历史趋势）
+- 生理指标关联分析（睡眠、HRV、心率与情绪的关系）
+- 用药依从性评估
+- 趋势变化分析
+- 预警信号识别
+- 具体可行的建议
+
+【输出JSON格式】
 {
-  "status": "根据特征判断：稳定/轻度躁狂倾向/轻度抑郁倾向/需要关注",
+  "status": "稳定/轻度躁狂倾向/轻度抑郁倾向/需要关注",
   "statusColor": "green/yellow/orange/red",
-  "summary": "基于特征提取的简短总结",
-  "analysis": "详细的特征分析结果描述",
-  "warnings": ["如果self_judgment.level为L3，添加：你的感受值得被认真对待。如果你正在经历持续的痛苦或绝望，请考虑联系可信的人或当地专业帮助。"],
-  "suggestions": ["基于特征的建议"],
+  "summary": "2-3句话的核心总结",
+  "analysis": "详细分析（至少150字），包括：情绪状态分析、生理指标解读、趋势观察、特征发现等",
+  "warnings": ["需要注意的预警信号，如果有的话"],
+  "suggestions": ["具体可行的建议，至少2-3条"],
   "trendDirection": "up/down/stable",
   "features": {
-    "emotion_words": {...},
-    "text_metrics": {...},
-    "self_judgment": {...},
-    "coherence": {...},
-    "expression_richness": {...},
-    "topic_concentration": {...}
+    "emotion_words": {"positive":[],"negative":[],"ambivalent":[]},
+    "self_judgment": {"level":"L1/L2/L3","excerpts":[]},
+    "coherence": {"score":1-5,"pattern":"..."},
+    "expression_richness": {"vocabulary_diversity":1-5,"style":"..."},
+    "topic_concentration": {"dominant_topic":"...","self_focus_percentage":0-100}
   }
 }
+
+请确保 analysis 字段内容详细丰富，suggestions 至少包含2-3条具体建议。
 只输出JSON。` 
   
-  : `Please analyze the following user text and extract these features:
+  : `Please analyze the following mood record. First extract structured features, then provide detailed analysis.
 
 【User Text】
 "${entry.moodText || '(none)'}"
@@ -185,50 +171,49 @@ ${history.slice(-7).map(h => `${h.date}: 情绪=${h.moodScore}, 睡眠=${h.sleep
 【Historical Data (last 7 days)】
 ${history.slice(-7).map(h => `${h.date}: mood=${h.moodScore}, sleep=${h.sleep}h`).join('\n') || 'No historical data'}
 
-【Features to Extract】
+【Step 1: Extract Structured Features】
 
-1. Emotion Words (emotion_words)
-   - Identify emotion-related words
-   - Categorize as: positive, negative, ambivalent
+1. Emotion Words (emotion_words) - positive/negative/ambivalent
 
-2. Text Metrics (text_metrics)
-   - character_count, sentence_count, avg_sentence_length
-
-3. Self-Judgment Detection (self_judgment)
-   - detected: true/false
+2. Self-Judgment Detection (self_judgment)
    - level: L1 (normal) / L2 (negative, non-acute) / L3 (hopelessness, acute)
-   - excerpts: extracted phrases
+   - excerpts: original phrases
 
-4. Coherence Analysis (coherence)
-   - score: 1-5
-   - pattern: "linear"/"fragmented"/"circular"/"scattered"
+3. Coherence - score 1-5, pattern: linear/fragmented/circular/scattered
 
-5. Expression Richness (expression_richness)
-   - vocabulary_diversity: 1-5
-   - expression_style: "minimal"/"moderate"/"elaborate"/"repetitive"
+4. Expression Richness - vocabulary_diversity 1-5, style: minimal/moderate/elaborate/repetitive
 
-6. Topic Concentration (topic_concentration)
-   - dominant_topic: self/others/work_study/health/relationships/future/past
-   - self_focus_percentage: 0-100
+5. Topic Concentration - dominant_topic, self_focus_percentage
 
-⚠️ Based on the extracted features, generate final output JSON:
+【Step 2: Comprehensive Analysis】
+
+Based on extracted features and physiological data, provide:
+- Mood state assessment (combining emotion words, self-judgment level, historical trends)
+- Physiological correlation analysis (sleep, HRV, heart rate vs mood)
+- Medication adherence evaluation
+- Trend analysis
+- Warning sign identification
+- Specific actionable suggestions
+
+【Output JSON Format】
 {
-  "status": "Based on features: Stable/Mild manic tendency/Mild depressive tendency/Needs attention",
+  "status": "Stable/Mild manic tendency/Mild depressive tendency/Needs attention",
   "statusColor": "green/yellow/orange/red",
-  "summary": "Brief summary based on feature extraction",
-  "analysis": "Detailed feature analysis description",
-  "warnings": ["If self_judgment.level is L3, add: Your feelings deserve to be taken seriously. If you are experiencing persistent pain or despair, please consider reaching out to someone you trust or local professional help."],
-  "suggestions": ["Suggestions based on features"],
+  "summary": "2-3 sentence core summary",
+  "analysis": "Detailed analysis (at least 150 words), including: mood state analysis, physiological interpretation, trend observations, feature findings",
+  "warnings": ["Warning signs to note, if any"],
+  "suggestions": ["Specific actionable suggestions, at least 2-3 items"],
   "trendDirection": "up/down/stable",
   "features": {
-    "emotion_words": {...},
-    "text_metrics": {...},
-    "self_judgment": {...},
-    "coherence": {...},
-    "expression_richness": {...},
-    "topic_concentration": {...}
+    "emotion_words": {"positive":[],"negative":[],"ambivalent":[]},
+    "self_judgment": {"level":"L1/L2/L3","excerpts":[]},
+    "coherence": {"score":1-5,"pattern":"..."},
+    "expression_richness": {"vocabulary_diversity":1-5,"style":"..."},
+    "topic_concentration": {"dominant_topic":"...","self_focus_percentage":0-100}
   }
 }
+
+Ensure the analysis field is detailed and rich, suggestions should include at least 2-3 specific items.
 Output JSON only.`
 
   const messages = [
