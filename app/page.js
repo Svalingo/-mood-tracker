@@ -8,128 +8,429 @@ const i18n = {
     title: '我们不判断，只陪你一起看见自己的情绪波动', subtitle: '',
     login: '登录', register: '注册', logout: '退出登录', email: '邮箱', password: '密码',
     loginBtn: '登录', registerBtn: '注册', switchToRegister: '没有账号？注册', switchToLogin: '已有账号？登录',
-    tabs: { input: '📝 记录', analysis: '🔍 分析', trends: '📊 趋势' },
+    tabs: { input: '📝 记录', analysis: '👁️ 观察', trends: '📊 趋势' },
     date: '日期', moodScore: '今日情绪评分', moodDesc: '描述你的感受',
     moodPlaceholder: '今天感觉如何？有什么特别的想法或经历？',
     watchData: 'Apple Watch 数据', sleep: '睡眠时长', hours: '小时', hrv: 'HRV',
     steps: '步数', stepUnit: '步', exercise: '运动时长', minutes: '分钟',
     sleepHR: '睡眠心率范围', min: '最低', max: '最高',
     medication: '💊 用药记录', medPlaceholder: '记录今天的用药情况，如：碳酸锂 300mg 早晚各一次',
-    medTaken: '已按时服药', submit: '提交并分析', submitNoApi: '📋 记录并生成对话提示',
-    noApiHint: '未配置 API，提交后将生成对话提示', saving: '保存中...', analyzing: 'AI 正在分析...',
+    medTaken: '已按时服药', submit: '提交记录', submitNoApi: '📋 记录并生成对话提示',
+    noApiHint: '未配置 API，提交后将生成对话提示', saving: '保存中...', analyzing: '正在观察你的记录...',
     saved: '✨ 记录已保存', copyHint: '💬 复制下面的内容，发送给你信赖的大模型进行对话分析',
     copy: '📋 复制到剪贴板', copied: '已复制！', viewTrends: '查看趋势',
-    status: '当前状态', summary: '📋 摘要', analysis: '🔍 详细分析', 
-    warnings: '⚠️ 注意事项', suggestions: '💡 建议',
-    waiting: '等待分析', twoMethods: '两种分析方式',
-    method1: '💬 方式一：与你所信赖的大模型对话', method1Desc: '提交记录后，复制生成的提示词进行对话分析',
-    method2: '⚡ 方式二：自动 API 分析', method2Desc: '配置 API Key 后，获得即时分析结果',
+    status: '今日记录', summary: '📋 概览', observation: '👁️ 基于你的记录', analysis: '📊 详细数据',
+    noteFromRecord: '💜 来自记录的观察', rawData: '📄 原始数据',
+    waiting: '等待记录', twoMethods: '两种使用方式',
+    method1: '💬 方式一：与你所信赖的大模型对话', method1Desc: '提交记录后，复制生成的提示词进行对话',
+    method2: '⚡ 方式二：自动特征提取', method2Desc: '配置 API Key 后，获得结构化的观察结果',
     trendsTitle: '📈 情绪与生理指标趋势', noData: '暂无数据，开始记录后这里将显示趋势图表',
     moodTrend: '情绪评分', sleepHrv: '睡眠 & HRV', sleepHRRange: '睡眠心率范围',
     show: '显示', hide: '隐藏', history: '历史记录', records: '条',
-    disclaimer: '⚠️ 本应用仅供辅助记录和参考，不能替代专业医疗诊断。',
-    disclaimer2: '如感到严重不适，请及时联系你的医生或心理健康专业人士。',
+    disclaimer: '本应用仅供辅助记录和自我观察，不提供任何诊断或医疗建议。',
+    disclaimer2: '如果你需要支持，请联系你信任的人或专业人士。',
     delete: '删除', confirmDelete: '确定删除这条记录吗？',
     enterMood: '请输入今天的情绪感受', lowestHR: '最低心率', highestHR: '最高心率',
     loginError: '登录失败，请检查邮箱和密码', registerError: '注册失败',
     registerSuccess: '注册成功！', loading: '加载中...',
     apiSettings: '⚙️ API 设置', provider: '选择 API 服务商', apiKey: 'API Key',
     apiKeyPlaceholder: '输入你的 API Key', model: '模型', apiUrl: 'API 地址',
-    configured: '已配置', notConfigured: '⚠️ 未配置 API Key 时，可复制提示词与大模型对话',
+    configured: '已配置', notConfigured: '未配置 API Key 时，可复制提示词与大模型对话',
     done: '完成', configApi: '⚙️ 配置 API'
   },
   en: {
     title: 'We don\'t judge. We just help you see your emotional waves.', subtitle: '',
     login: 'Login', register: 'Register', logout: 'Logout', email: 'Email', password: 'Password',
     loginBtn: 'Login', registerBtn: 'Register', switchToRegister: 'No account? Register', switchToLogin: 'Have account? Login',
-    tabs: { input: '📝 Record', analysis: '🔍 Analysis', trends: '📊 Trends' },
+    tabs: { input: '📝 Record', analysis: '👁️ Observe', trends: '📊 Trends' },
     date: 'Date', moodScore: 'Today\'s Mood Score', moodDesc: 'Describe your feelings',
     moodPlaceholder: 'How are you feeling today? Any special thoughts or experiences?',
     watchData: 'Apple Watch Data', sleep: 'Sleep', hours: 'hrs', hrv: 'HRV',
     steps: 'Steps', stepUnit: 'steps', exercise: 'Exercise', minutes: 'min',
     sleepHR: 'Sleep Heart Rate Range', min: 'Min', max: 'Max',
     medication: '💊 Medication Log', medPlaceholder: 'Record today\'s medication, e.g.: Lithium 300mg twice daily',
-    medTaken: 'Medication taken as scheduled', submit: 'Submit & Analyze', submitNoApi: '📋 Record & Generate Prompt',
-    noApiHint: 'No API configured. A prompt will be generated.', saving: 'Saving...', analyzing: 'AI analyzing...',
-    saved: '✨ Record Saved', copyHint: '💬 Copy and send to your trusted AI for analysis',
+    medTaken: 'Medication taken as scheduled', submit: 'Submit Record', submitNoApi: '📋 Record & Generate Prompt',
+    noApiHint: 'No API configured. A prompt will be generated.', saving: 'Saving...', analyzing: 'Observing your record...',
+    saved: '✨ Record Saved', copyHint: '💬 Copy and send to your trusted AI for conversation',
     copy: '📋 Copy to Clipboard', copied: 'Copied!', viewTrends: 'View Trends',
-    status: 'Current Status', summary: '📋 Summary', analysis: '🔍 Detailed Analysis',
-    warnings: '⚠️ Warnings', suggestions: '💡 Suggestions',
-    waiting: 'Waiting for analysis', twoMethods: 'Two Analysis Methods',
-    method1: '💬 Method 1: Chat with your trusted AI', method1Desc: 'Copy the generated prompt for conversation analysis',
-    method2: '⚡ Method 2: Auto API Analysis', method2Desc: 'Configure API Key for instant analysis',
+    status: 'Today\'s Record', summary: '📋 Overview', observation: '👁️ Based on your record', analysis: '📊 Detailed Data',
+    noteFromRecord: '💜 Observations from your record', rawData: '📄 Raw Data',
+    waiting: 'Awaiting record', twoMethods: 'Two Ways to Use',
+    method1: '💬 Method 1: Chat with your trusted AI', method1Desc: 'Copy the generated prompt for conversation',
+    method2: '⚡ Method 2: Auto Feature Extraction', method2Desc: 'Configure API Key for structured observations',
     trendsTitle: '📈 Mood & Physiological Trends', noData: 'No data yet. Trends will appear after you start recording.',
     moodTrend: 'Mood Score', sleepHrv: 'Sleep & HRV', sleepHRRange: 'Sleep HR Range',
     show: 'Show', hide: 'Hide', history: 'History', records: 'records',
-    disclaimer: '⚠️ This app is for reference only and cannot replace professional medical diagnosis.',
-    disclaimer2: 'If you feel severe discomfort, please contact your doctor or mental health professional.',
+    disclaimer: 'This app is for self-recording and observation only. It does not provide diagnosis or medical advice.',
+    disclaimer2: 'If you need support, please reach out to someone you trust or a professional.',
     delete: 'Delete', confirmDelete: 'Delete this record?',
     enterMood: 'Please enter your mood description', lowestHR: 'Lowest HR', highestHR: 'Highest HR',
     loginError: 'Login failed, please check email and password', registerError: 'Registration failed',
     registerSuccess: 'Registered!', loading: 'Loading...',
     apiSettings: '⚙️ API Settings', provider: 'Select API Provider', apiKey: 'API Key',
     apiKeyPlaceholder: 'Enter your API Key', model: 'Model', apiUrl: 'API URL',
-    configured: 'Configured', notConfigured: '⚠️ Without API Key, you can copy prompts to chat with AI',
+    configured: 'Configured', notConfigured: 'Without API Key, you can copy prompts to chat with AI',
     done: 'Done', configApi: '⚙️ Configure API'
   }
 }
 
 const API_PROVIDERS = {
-  openai: { name: 'OpenAI', baseUrl: 'https://api.openai.com/v1/chat/completions', defaultModel: 'gpt-4o', models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'], formatRequest: (m, model) => ({ model, messages: m, max_tokens: 1500 }), parseResponse: d => d.choices[0].message.content },
-  anthropic: { name: 'Anthropic Claude', baseUrl: 'https://api.anthropic.com/v1/messages', defaultModel: 'claude-sonnet-4-20250514', models: ['claude-sonnet-4-20250514', 'claude-3-5-sonnet-20241022'], formatRequest: (m, model) => ({ model, max_tokens: 1500, messages: m }), parseResponse: d => d.content[0].text, extraHeaders: { 'anthropic-version': '2023-06-01' } },
-  deepseek: { name: 'DeepSeek', baseUrl: 'https://api.deepseek.com/chat/completions', defaultModel: 'deepseek-chat', models: ['deepseek-chat', 'deepseek-coder'], formatRequest: (m, model) => ({ model, messages: m, max_tokens: 1500 }), parseResponse: d => d.choices[0].message.content },
-  moonshot: { name: 'Moonshot (月之暗面)', baseUrl: 'https://api.moonshot.cn/v1/chat/completions', defaultModel: 'moonshot-v1-8k', models: ['moonshot-v1-8k', 'moonshot-v1-32k'], formatRequest: (m, model) => ({ model, messages: m, max_tokens: 1500 }), parseResponse: d => d.choices[0].message.content },
-  zhipu: { name: '智谱 GLM', baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', defaultModel: 'glm-4', models: ['glm-4', 'glm-4-flash'], formatRequest: (m, model) => ({ model, messages: m, max_tokens: 1500 }), parseResponse: d => d.choices[0].message.content },
-  custom: { name: 'Custom API', baseUrl: '', defaultModel: '', models: [], formatRequest: (m, model) => ({ model, messages: m, max_tokens: 1500 }), parseResponse: d => d.choices?.[0]?.message?.content || d.content?.[0]?.text || '' }
+  openai: { name: 'OpenAI', baseUrl: 'https://api.openai.com/v1/chat/completions', defaultModel: 'gpt-4o', models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'], formatRequest: (msgs, model) => ({ model, messages: msgs, max_tokens: 1500 }), parseResponse: d => d.choices[0].message.content },
+  anthropic: { name: 'Anthropic Claude', baseUrl: 'https://api.anthropic.com/v1/messages', defaultModel: 'claude-sonnet-4-20250514', models: ['claude-sonnet-4-20250514', 'claude-3-5-sonnet-20241022'], formatRequest: (msgs, model) => ({ model, max_tokens: 1500, system: msgs.find(m => m.role === 'system')?.content || '', messages: msgs.filter(m => m.role !== 'system') }), parseResponse: d => d.content[0].text, extraHeaders: { 'anthropic-version': '2023-06-01' } },
+  deepseek: { name: 'DeepSeek', baseUrl: 'https://api.deepseek.com/chat/completions', defaultModel: 'deepseek-chat', models: ['deepseek-chat', 'deepseek-coder'], formatRequest: (msgs, model) => ({ model, messages: msgs, max_tokens: 1500 }), parseResponse: d => d.choices[0].message.content },
+  moonshot: { name: 'Moonshot (月之暗面)', baseUrl: 'https://api.moonshot.cn/v1/chat/completions', defaultModel: 'moonshot-v1-8k', models: ['moonshot-v1-8k', 'moonshot-v1-32k'], formatRequest: (msgs, model) => ({ model, messages: msgs, max_tokens: 1500 }), parseResponse: d => d.choices[0].message.content },
+  zhipu: { name: '智谱 GLM', baseUrl: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', defaultModel: 'glm-4', models: ['glm-4', 'glm-4-flash'], formatRequest: (msgs, model) => ({ model, messages: msgs, max_tokens: 1500 }), parseResponse: d => d.choices[0].message.content },
+  custom: { name: 'Custom API', baseUrl: '', defaultModel: '', models: [], formatRequest: (msgs, model) => ({ model, messages: msgs, max_tokens: 1500 }), parseResponse: d => d.choices?.[0]?.message?.content || d.content?.[0]?.text || '' }
+}
+
+// ============ 系统级 Prompt ============
+const SYSTEM_PROMPT = `You are a text observation assistant that extracts structured linguistic features from user journal entries.
+
+You are NOT allowed to:
+- interpret or explain the meaning of emotions
+- predict future mental states
+- provide therapeutic advice or recommendations
+- diagnose any mental health condition
+- assume causality between data points
+- use alarming or clinical language
+
+Your task is strictly feature extraction and observation. You will output structured JSON based on the user's request.
+
+When you detect that the user's expression shows signs of needing support (such as expressions of persistent pain, loneliness, or seeking understanding), set needs_care to true and add a gentle "care_message" field:
+
+For Chinese: "你的感受值得被认真对待。如果你想找人聊聊，可以考虑联系你信任的人。"
+
+For English: "Your feelings deserve to be taken seriously. If you'd like to talk to someone, consider reaching out to someone you trust."
+
+Use gentle, non-judgmental language throughout. Avoid terms like "risk", "warning", "concern", "negative". Instead use observational language like "based on your words", "relatively", "appears to".
+
+Output valid JSON only.`
+
+// ============ User Prompt 模板 ============
+const buildUserPrompt = (entry, history, lang) => {
+  const isZh = lang === 'zh'
+  return isZh ? `请分析下面的用户输入文本，并提取以下信息：
+
+【用户文本】
+"${entry.moodText || '（无）'}"
+
+【需要提取的特征】
+
+1. 情绪词汇（emotion_words）
+   - 识别文本中的情绪相关词汇
+   - 分类为：positive（积极）、negative（消极）、ambivalent（复杂/矛盾）
+   - 包括但不限于：焦虑、轻松、茫然、混乱、期待、厌恶、平静、恐惧、愤怒、悲伤、快乐、无望、疲惫 等
+
+2. 文本长度特征（text_metrics）
+   - character_count: 字符数
+   - sentence_count: 句子数
+   - avg_sentence_length: 平均句长（字符数）
+
+3. 自我表达检测（self_expression）
+   - detected: 是否检测到自我相关表达（true/false）
+   - tone: 语气标记（不做判断，仅观察）
+       * neutral: 中性自述（如"我今天还行"、"我做了这件事"）
+       * reflective: 反思型表达（如"我在想..."、"我觉得自己..."）
+       * low_energy: 低能量表达（如"有点累"、"不太想动"）
+       * seeking_support: 寻求支持的表达（如"希望有人理解"、"感觉很孤单"）
+   - excerpts: 提取原文片段（不做解释，仅摘录）
+   - needs_care: 如果检测到表达中包含持续痛苦或需要支持的信号，标记为 true
+
+4. 连贯性分析（coherence）
+   - score: 1-5 分（1=片段化/跳跃，5=逻辑清晰流畅）
+   - indicators: 
+       * logical_connectors: 逻辑连接词数量（因为、所以、但是、然后、接着 等）
+       * topic_shifts: 话题转换次数
+       * incomplete_thoughts: 未完成/中断的句子数
+   - pattern: "linear"（线性叙述）/ "fragmented"（片段化）/ "circular"（循环反复）/ "scattered"（发散跳跃）
+
+5. 表达丰富度（expression_richness）
+   - vocabulary_diversity: 词汇多样性得分 1-5（1=重复单一，5=丰富多样）
+   - unique_word_ratio: 不重复词汇占比（估算）
+   - descriptive_elements:
+       * adjectives_count: 形容词数量
+       * metaphors_detected: 是否使用比喻/隐喻（true/false）
+       * sensory_words: 感官词汇（视觉、听觉、触觉等描述）
+   - expression_style: "minimal"（极简）/ "moderate"（适中）/ "elaborate"（详尽）/ "repetitive"（重复）
+
+6. 特定话题浓度（topic_concentration）
+   - detected_topics: 识别到的主要话题及其出现强度
+       * self: 自我相关（0-100%）
+       * others: 他人相关（0-100%）
+       * work_study: 工作/学习（0-100%）
+       * health: 健康/身体（0-100%）
+       * relationships: 人际关系（0-100%）
+       * future: 未来/计划（0-100%）
+       * past: 过去/回忆（0-100%）
+   - dominant_topic: 最主要的话题
+   - rumination_indicators: 反刍思维指标
+       * repetitive_themes: 重复出现的主题词
+       * stuck_patterns: 是否有"卡住"的表达模式（如反复提及同一件事）
+
+7. 生理数据汇总（physiological_data）
+   - sleep_hours: ${entry.sleep}
+   - hrv_ms: ${entry.hrv}
+   - sleep_hr_range: [${entry.sleepHRMin}, ${entry.sleepHRMax}]
+   - steps: ${entry.steps}
+   - exercise_minutes: ${entry.exercise}
+
+8. 用药状态（medication_status）
+   - recorded: ${entry.medication ? 'true' : 'false'}
+   - taken_as_scheduled: ${entry.medicationTaken ? 'true' : 'false'}
+   - medication_text: "${entry.medication || ''}"
+
+9. 历史数据模式（history_pattern）
+   - recent_mood_scores: [${history.slice(-7).map(h => h.moodScore).join(', ') || '无数据'}]
+   - recent_sleep_hours: [${history.slice(-7).map(h => h.sleep).join(', ') || '无数据'}]
+   - data_points: ${history.length}
+
+⚠️ 输出格式：严格 JSON，不含额外解释。
+⚠️ 如果 self_expression.needs_care 为 true，请在 JSON 中添加 "care_message" 字段。`
+
+: `Please analyze the following user text and extract these features:
+
+【User Text】
+"${entry.moodText || '(none)'}"
+
+【Features to Extract】
+
+1. Emotion Words (emotion_words)
+   - Identify emotion-related words in the text
+   - Categorize as: positive, negative, ambivalent
+   - Including but not limited to: anxious, relaxed, confused, hopeful, disgusted, calm, fearful, angry, sad, happy, hopeless, exhausted, etc.
+
+2. Text Metrics (text_metrics)
+   - character_count: number of characters
+   - sentence_count: number of sentences
+   - avg_sentence_length: average sentence length (characters)
+
+3. Self-Expression Detection (self_expression)
+   - detected: whether self-related expression is detected (true/false)
+   - tone: tone marker (observation only, no judgment)
+       * neutral: neutral self-statement (e.g., "I'm okay today", "I did this")
+       * reflective: reflective expression (e.g., "I'm thinking...", "I feel like...")
+       * low_energy: low energy expression (e.g., "feeling tired", "don't want to move")
+       * seeking_support: support-seeking expression (e.g., "wish someone understood", "feeling alone")
+   - excerpts: extracted original phrases (no interpretation, just quotes)
+   - needs_care: if persistent pain or support-seeking signals detected, mark as true
+
+4. Coherence Analysis (coherence)
+   - score: 1-5 (1=fragmented/jumpy, 5=logically clear and smooth)
+   - indicators:
+       * logical_connectors: count of logical connectors (because, so, but, then, etc.)
+       * topic_shifts: number of topic changes
+       * incomplete_thoughts: number of incomplete/interrupted sentences
+   - pattern: "linear" / "fragmented" / "circular" / "scattered"
+
+5. Expression Richness (expression_richness)
+   - vocabulary_diversity: score 1-5 (1=repetitive/limited, 5=rich/diverse)
+   - unique_word_ratio: estimated ratio of unique words
+   - descriptive_elements:
+       * adjectives_count: number of adjectives
+       * metaphors_detected: whether metaphors are used (true/false)
+       * sensory_words: sensory vocabulary (visual, auditory, tactile descriptions)
+   - expression_style: "minimal" / "moderate" / "elaborate" / "repetitive"
+
+6. Topic Concentration (topic_concentration)
+   - detected_topics: identified main topics and their intensity
+       * self: self-related (0-100%)
+       * others: others-related (0-100%)
+       * work_study: work/study (0-100%)
+       * health: health/body (0-100%)
+       * relationships: interpersonal (0-100%)
+       * future: future/plans (0-100%)
+       * past: past/memories (0-100%)
+   - dominant_topic: the most prominent topic
+   - rumination_indicators:
+       * repetitive_themes: recurring theme words
+       * stuck_patterns: whether there are "stuck" expression patterns
+
+7. Physiological Data (physiological_data)
+   - sleep_hours: ${entry.sleep}
+   - hrv_ms: ${entry.hrv}
+   - sleep_hr_range: [${entry.sleepHRMin}, ${entry.sleepHRMax}]
+   - steps: ${entry.steps}
+   - exercise_minutes: ${entry.exercise}
+
+8. Medication Status (medication_status)
+   - recorded: ${entry.medication ? 'true' : 'false'}
+   - taken_as_scheduled: ${entry.medicationTaken ? 'true' : 'false'}
+   - medication_text: "${entry.medication || ''}"
+
+9. History Pattern (history_pattern)
+   - recent_mood_scores: [${history.slice(-7).map(h => h.moodScore).join(', ') || 'no data'}]
+   - recent_sleep_hours: [${history.slice(-7).map(h => h.sleep).join(', ') || 'no data'}]
+   - data_points: ${history.length}
+
+⚠️ Output format: Strict JSON, no additional explanations.
+⚠️ If self_expression.needs_care is true, add a "care_message" field to the JSON.`
+       * L1: Normal self-assessment (e.g., "I'm doing okay today")
+       * L2: Negative self-assessment, non-acute (e.g., "I haven't been doing well", "I always mess up")
+       * L3: Hopelessness statements, acute risk (e.g., "life isn't worth living", "I'm a burden", "don't want to continue")
+   - excerpts: extracted original phrases (no interpretation, just quotes)
+
+4. Physiological Data (physiological_data)
+   - sleep_hours: ${entry.sleep}
+   - hrv_ms: ${entry.hrv}
+   - sleep_hr_range: [${entry.sleepHRMin}, ${entry.sleepHRMax}]
+   - steps: ${entry.steps}
+   - exercise_minutes: ${entry.exercise}
+
+5. Medication Status (medication_status)
+   - recorded: ${entry.medication ? 'true' : 'false'}
+   - taken_as_scheduled: ${entry.medicationTaken ? 'true' : 'false'}
+   - medication_text: "${entry.medication || ''}"
+
+6. History Pattern (history_pattern)
+   - recent_mood_scores: [${history.slice(-7).map(h => h.moodScore).join(', ') || 'no data'}]
+   - recent_sleep_hours: [${history.slice(-7).map(h => h.sleep).join(', ') || 'no data'}]
+   - data_points: ${history.length}
+
+⚠️ Output format: Strict JSON, no additional explanations.
+⚠️ If self_judgment.level is L3, you MUST add a "care_message" field to the JSON.`
 }
 
 const analyzeWithAI = async (entry, history, config, lang) => {
-  const isZh = lang === 'zh'
-  const prompt = isZh ? `你是一位专业的心理健康分析助手，帮助双相障碍患者追踪情绪。
-
-当前数据：
-- 日期：${entry.date}
-- 情绪感受：${entry.moodText}
-- 情绪评分（1-10）：${entry.moodScore}
-- 睡眠：${entry.sleep}小时 | HRV：${entry.hrv}ms | 睡眠心率：${entry.sleepHRMin}-${entry.sleepHRMax}bpm
-- 步数：${entry.steps} | 运动：${entry.exercise}分钟
-- 用药：${entry.medication || '未记录'} | 按时服药：${entry.medicationTaken ? '是' : '否'}
-
-历史数据（最近7天）：
-${history.slice(-7).map(h => `${h.date}: 情绪=${h.moodScore}, 睡眠=${h.sleep}h, 用药=${h.medication || '未记录'}`).join('\n')}
-
-请分析并输出JSON：
-{"status":"稳定/轻度躁狂倾向/轻度抑郁倾向/需要关注","statusColor":"green/yellow/orange/red","summary":"简短总结","analysis":"详细分析","warnings":["预警信号"],"suggestions":["建议"],"trendDirection":"up/down/stable"}
-只输出JSON。` : `You are a mental health assistant helping bipolar patients track mood.
-
-Current data:
-- Date: ${entry.date}
-- Mood: ${entry.moodText}
-- Score (1-10): ${entry.moodScore}
-- Sleep: ${entry.sleep}h | HRV: ${entry.hrv}ms | Sleep HR: ${entry.sleepHRMin}-${entry.sleepHRMax}bpm
-- Steps: ${entry.steps} | Exercise: ${entry.exercise}min
-- Medication: ${entry.medication || 'Not recorded'} | Taken: ${entry.medicationTaken ? 'Yes' : 'No'}
-
-History (last 7 days):
-${history.slice(-7).map(h => `${h.date}: mood=${h.moodScore}, sleep=${h.sleep}h, med=${h.medication || 'N/A'}`).join('\n')}
-
-Analyze and output JSON:
-{"status":"Stable/Mild manic/Mild depressive/Needs attention","statusColor":"green/yellow/orange/red","summary":"Brief","analysis":"Detailed","warnings":["warnings"],"suggestions":["suggestions"],"trendDirection":"up/down/stable"}
-Output JSON only.`
+  const userPrompt = buildUserPrompt(entry, history, lang)
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user', content: userPrompt }
+  ]
 
   const provider = API_PROVIDERS[config.provider]
   const baseUrl = config.provider === 'custom' ? config.customUrl : provider.baseUrl
   const model = config.model || provider.defaultModel
+  
   try {
     const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.apiKey}`, ...provider.extraHeaders }
     if (config.provider === 'anthropic') { headers['x-api-key'] = config.apiKey; delete headers['Authorization'] }
-    const res = await fetch(baseUrl, { method: 'POST', headers, body: JSON.stringify(provider.formatRequest([{ role: 'user', content: prompt }], model)) })
+    const res = await fetch(baseUrl, { method: 'POST', headers, body: JSON.stringify(provider.formatRequest(messages, model)) })
     if (!res.ok) throw new Error(`API error: ${res.status}`)
     const data = await res.json()
     let text = provider.parseResponse(data).replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
-    return JSON.parse(text)
+    const parsed = JSON.parse(text)
+    
+    // 使用 self_expression 的 needs_care 字段
+    const needsCare = parsed.self_expression?.needs_care || false
+    const tone = parsed.self_expression?.tone || 'neutral'
+    
+    // 构建摘要
+    const emotionCount = parsed.emotion_words ? 
+      (Array.isArray(parsed.emotion_words) ? parsed.emotion_words.length : 
+       Object.values(parsed.emotion_words).flat().length) : 0
+    
+    // 使用更安全温和的措辞
+    const toneLabels = {
+      zh: { 
+        neutral: '日常记录', 
+        reflective: '反思时刻', 
+        low_energy: '低能量期', 
+        seeking_support: '需要陪伴的时刻' 
+      },
+      en: { 
+        neutral: 'Daily record', 
+        reflective: 'Reflective moment', 
+        low_energy: 'Low energy period', 
+        seeking_support: 'A moment needing support' 
+      }
+    }
+    
+    const statusLabels = {
+      zh: { 
+        neutral: '记录完成', 
+        reflective: '观察到反思性表达', 
+        low_energy: '观察到低能量表达', 
+        seeking_support: '你的感受被看见了' 
+      },
+      en: { 
+        neutral: 'Record complete', 
+        reflective: 'Reflective expression observed', 
+        low_energy: 'Low energy expression observed', 
+        seeking_support: 'Your feelings are seen' 
+      }
+    }
+    
+    // 构建基于记录的观察（而非判断）
+    const buildObservations = (parsed, lang) => {
+      const obs = []
+      const isZh = lang === 'zh'
+      
+      // 情绪词观察
+      const emotionWords = parsed.emotion_words
+      if (emotionWords) {
+        const negative = emotionWords.negative?.length || 0
+        const positive = emotionWords.positive?.length || 0
+        if (negative > positive && negative > 0) {
+          obs.push(isZh ? `基于你的文字，出现了 ${negative} 个偏低能量的情绪词` : `Based on your words, ${negative} lower-energy emotion words appeared`)
+        } else if (positive > negative && positive > 0) {
+          obs.push(isZh ? `基于你的文字，出现了 ${positive} 个积极的情绪词` : `Based on your words, ${positive} positive emotion words appeared`)
+        }
+      }
+      
+      // 表达风格观察
+      if (parsed.expression_richness?.expression_style === 'minimal') {
+        obs.push(isZh ? '基于你的记录，今天的表达相对简短' : 'Based on your entry, today\'s expression is relatively brief')
+      } else if (parsed.expression_richness?.expression_style === 'elaborate') {
+        obs.push(isZh ? '基于你的记录，今天写了比较多的内容' : 'Based on your entry, you wrote quite a bit today')
+      }
+      
+      // 连贯性观察
+      if (parsed.coherence) {
+        if (parsed.coherence.score <= 2) {
+          obs.push(isZh ? '基于你写的内容，思路看起来比较跳跃' : 'Based on what you wrote, thoughts appear somewhat scattered')
+        }
+        if (parsed.coherence.pattern === 'circular') {
+          obs.push(isZh ? '基于你的记录，某些想法似乎在反复出现' : 'Based on your entry, some thoughts seem to be recurring')
+        }
+      }
+      
+      // 话题浓度观察
+      if (parsed.topic_concentration?.detected_topics?.self > 70) {
+        obs.push(isZh ? '基于你的记录，内容主要围绕自己' : 'Based on your entry, content mainly focuses on yourself')
+      }
+      
+      // 反刍指标
+      if (parsed.topic_concentration?.rumination_indicators?.stuck_patterns) {
+        obs.push(isZh ? '基于你的文字，可能有一些想法在脑海中盘旋' : 'Based on your text, some thoughts may be circling')
+      }
+      
+      // 睡眠观察
+      if (parsed.physiological_data?.sleep_hours < 6) {
+        obs.push(isZh ? `基于记录，睡眠时长相对偏少（${parsed.physiological_data.sleep_hours}小时）` : `Based on the record, sleep duration is relatively low (${parsed.physiological_data.sleep_hours}h)`)
+      }
+      
+      // 如果没有特别的观察，给一个温和的默认观察
+      if (obs.length === 0) {
+        obs.push(isZh ? '今天的记录已保存，你可以随时回顾' : 'Today\'s record is saved, you can review it anytime')
+      }
+      
+      return obs
+    }
+    
+    const observations = buildObservations(parsed, lang)
+    
+    // 决定状态颜色（使用柔和的颜色）
+    const statusColor = needsCare ? 'purple' : (tone === 'low_energy' ? 'blue' : 'green')
+    
+    return {
+      status: statusLabels[lang][needsCare ? 'seeking_support' : tone] || statusLabels[lang].neutral,
+      statusColor: statusColor,
+      summary: lang === 'zh'
+        ? `记录于 ${entry.date} | ${toneLabels.zh[tone] || '日常记录'} | ${emotionCount} 个情绪词`
+        : `Recorded on ${entry.date} | ${toneLabels.en[tone] || 'Daily record'} | ${emotionCount} emotion words`,
+      analysis: JSON.stringify(parsed, null, 2),
+      observations: observations,
+      warnings: needsCare ? [parsed.care_message || (lang === 'zh' 
+        ? '你的感受值得被认真对待。如果你想找人聊聊，可以考虑联系你信任的人。' 
+        : 'Your feelings deserve to be taken seriously. If you\'d like to talk to someone, consider reaching out to someone you trust.')] : [],
+      suggestions: [],
+      trendDirection: 'stable',
+      rawFeatures: parsed,
+      careMessage: parsed.care_message || null
+    }
   } catch (e) {
-    return { status: isZh ? '分析失败' : 'Analysis failed', statusColor: 'gray', summary: e.message, analysis: '', warnings: [], suggestions: [], trendDirection: 'stable' }
+    const isZh = lang === 'zh'
+    return { status: isZh ? '记录已保存' : 'Record saved', statusColor: 'gray', summary: e.message, analysis: '', observations: [], warnings: [], suggestions: [], trendDirection: 'stable' }
   }
 }
 
@@ -230,31 +531,160 @@ export default function Home() {
     setAnalysis(null)
   }
 
-  const genPrompt = (e, h) => lang === 'zh' ? `你好，我正在追踪我的双相障碍情况，请帮我分析：
+  // 无 API 时生成的对话 prompt
+  const genPrompt = (e, h) => lang === 'zh' ? `请分析下面的用户输入文本，并提取以下信息：
 
-【今日记录】${e.date}
-- 情绪评分：${e.moodScore}/10
-- 感受：${e.moodText}
+【用户文本】
+"${e.moodText || '（无）'}"
 
-【生理数据】睡眠${e.sleep}h | HRV ${e.hrv}ms | 睡眠心率${e.sleepHRMin}-${e.sleepHRMax}bpm | 步数${e.steps} | 运动${e.exercise}min
+【需要提取的特征】
 
-【用药】${e.medication || '未记录'} | 按时服药：${e.medicationTaken ? '是' : '否'}
+1. 情绪词汇（emotion_words）
+   - 识别文本中的情绪相关词汇
+   - 分类为：positive（积极）、negative（消极）、ambivalent（复杂/矛盾）
+   - 包括但不限于：焦虑、轻松、茫然、混乱、期待、厌恶、平静、恐惧、愤怒、悲伤、快乐、无望、疲惫 等
 
-${h.length ? `【历史】\n${h.slice(-7).map(x => `${x.date}: 情绪${x.moodScore}, 睡眠${x.sleep}h, 用药${x.medication || '未记录'}`).join('\n')}` : '（首条记录）'}
+2. 文本长度特征（text_metrics）
+   - character_count: 字符数
+   - sentence_count: 句子数
+   - avg_sentence_length: 平均句长（字符数）
 
-请分析情绪状态、生理关联、用药依从性、趋势变化、预警信号和建议。谢谢！` : `Hi, I'm tracking my bipolar disorder. Please analyze:
+3. 自我评价检测（self_judgment）
+   - detected: 是否检测到自我评价（true/false）
+   - level: 等级标记
+       * L1: 一般自评（正常范围，如"我今天还行"）
+       * L2: 消极自评（非急性，如"我最近状态不太好"、"我总是做不好"）
+       * L3: 绝望语句（急性风险，如"活着没意思"、"我是个负担"、"不想继续了"）
+   - excerpts: 提取原文片段（不做解释，仅摘录）
 
-【Today】${e.date}
-- Mood: ${e.moodScore}/10
-- Feeling: ${e.moodText}
+4. 连贯性分析（coherence）
+   - score: 1-5 分（1=片段化/跳跃，5=逻辑清晰流畅）
+   - indicators:
+       * logical_connectors: 逻辑连接词数量（因为、所以、但是、然后、接着 等）
+       * topic_shifts: 话题突然转换次数
+       * incomplete_thoughts: 未完成/中断的句子数
+   - pattern: "linear"（线性叙述）/ "fragmented"（片段化）/ "circular"（循环反复）/ "scattered"（发散跳跃）
 
-【Data】Sleep ${e.sleep}h | HRV ${e.hrv}ms | Sleep HR ${e.sleepHRMin}-${e.sleepHRMax}bpm | Steps ${e.steps} | Exercise ${e.exercise}min
+5. 表达丰富度（expression_richness）
+   - vocabulary_diversity: 词汇多样性得分 1-5（1=重复单一，5=丰富多样）
+   - unique_word_ratio: 不重复词汇占比（估算）
+   - descriptive_elements:
+       * adjectives_count: 形容词数量
+       * metaphors_detected: 是否使用比喻/隐喻（true/false）
+       * sensory_words: 感官词汇（视觉、听觉、触觉等描述）
+   - expression_style: "minimal"（极简）/ "moderate"（适中）/ "elaborate"（详尽）/ "repetitive"（重复）
 
-【Medication】${e.medication || 'Not recorded'} | Taken: ${e.medicationTaken ? 'Yes' : 'No'}
+6. 特定话题浓度（topic_concentration）
+   - detected_topics: 识别到的主要话题及其出现强度
+       * self: 自我相关（0-100%）
+       * others: 他人相关（0-100%）
+       * work_study: 工作/学习（0-100%）
+       * health: 健康/身体（0-100%）
+       * relationships: 人际关系（0-100%）
+       * future: 未来/计划（0-100%）
+       * past: 过去/回忆（0-100%）
+   - dominant_topic: 最主要的话题
+   - rumination_indicators: 反刍思维指标
+       * repetitive_themes: 重复出现的主题词
+       * stuck_patterns: 是否有"卡住"的表达模式（如反复提及同一件事）
 
-${h.length ? `【History】\n${h.slice(-7).map(x => `${x.date}: mood${x.moodScore}, sleep${x.sleep}h, med${x.medication || 'N/A'}`).join('\n')}` : '(First record)'}
+7. 生理数据汇总（physiological_data）
+   - sleep_hours: ${e.sleep}
+   - hrv_ms: ${e.hrv}
+   - sleep_hr_range: [${e.sleepHRMin}, ${e.sleepHRMax}]
+   - steps: ${e.steps}
+   - exercise_minutes: ${e.exercise}
 
-Please analyze mood state, physiological correlations, medication adherence, trends, warnings, and suggestions. Thanks!`
+8. 用药状态（medication_status）
+   - recorded: ${e.medication ? 'true' : 'false'}
+   - taken_as_scheduled: ${e.medicationTaken ? 'true' : 'false'}
+   - medication_text: "${e.medication || ''}"
+
+9. 历史数据模式（history_pattern）
+   - recent_mood_scores: [${h.slice(-7).map(x => x.moodScore).join(', ') || '无数据'}]
+   - recent_sleep_hours: [${h.slice(-7).map(x => x.sleep).join(', ') || '无数据'}]
+   - data_points: ${h.length}
+
+⚠️ 输出格式：严格 JSON，不含额外解释。
+⚠️ 如果 self_judgment.level 为 L3，请在 JSON 末尾添加 care_message 字段：
+"你的感受值得被认真对待。如果你正在经历持续的痛苦或绝望，请考虑联系可信的人或当地专业帮助。"` 
+
+: `Please analyze the following user text and extract these features:
+
+【User Text】
+"${e.moodText || '(none)'}"
+
+【Features to Extract】
+
+1. Emotion Words (emotion_words)
+   - Identify emotion-related words in the text
+   - Categorize as: positive, negative, ambivalent
+   - Including but not limited to: anxious, relaxed, confused, hopeful, disgusted, calm, fearful, angry, sad, happy, hopeless, exhausted, etc.
+
+2. Text Metrics (text_metrics)
+   - character_count: number of characters
+   - sentence_count: number of sentences
+   - avg_sentence_length: average sentence length (characters)
+
+3. Self-Judgment Detection (self_judgment)
+   - detected: whether self-evaluation is detected (true/false)
+   - level: classification
+       * L1: Normal self-assessment (e.g., "I'm doing okay today")
+       * L2: Negative self-assessment, non-acute (e.g., "I haven't been doing well", "I always mess up")
+       * L3: Hopelessness statements, acute risk (e.g., "life isn't worth living", "I'm a burden", "don't want to continue")
+   - excerpts: extracted original phrases (no interpretation, just quotes)
+
+4. Coherence Analysis (coherence)
+   - score: 1-5 (1=fragmented/jumpy, 5=logically clear and smooth)
+   - indicators:
+       * logical_connectors: count of logical connectors (because, so, but, then, etc.)
+       * topic_shifts: number of abrupt topic changes
+       * incomplete_thoughts: number of incomplete/interrupted sentences
+   - pattern: "linear" / "fragmented" / "circular" / "scattered"
+
+5. Expression Richness (expression_richness)
+   - vocabulary_diversity: score 1-5 (1=repetitive/limited, 5=rich/diverse)
+   - unique_word_ratio: estimated ratio of unique words
+   - descriptive_elements:
+       * adjectives_count: number of adjectives
+       * metaphors_detected: whether metaphors are used (true/false)
+       * sensory_words: sensory vocabulary (visual, auditory, tactile descriptions)
+   - expression_style: "minimal" / "moderate" / "elaborate" / "repetitive"
+
+6. Topic Concentration (topic_concentration)
+   - detected_topics: identified main topics and their intensity
+       * self: self-related (0-100%)
+       * others: others-related (0-100%)
+       * work_study: work/study (0-100%)
+       * health: health/body (0-100%)
+       * relationships: interpersonal (0-100%)
+       * future: future/plans (0-100%)
+       * past: past/memories (0-100%)
+   - dominant_topic: the most prominent topic
+   - rumination_indicators:
+       * repetitive_themes: recurring theme words
+       * stuck_patterns: whether there are "stuck" expression patterns
+
+7. Physiological Data (physiological_data)
+   - sleep_hours: ${e.sleep}
+   - hrv_ms: ${e.hrv}
+   - sleep_hr_range: [${e.sleepHRMin}, ${e.sleepHRMax}]
+   - steps: ${e.steps}
+   - exercise_minutes: ${e.exercise}
+
+8. Medication Status (medication_status)
+   - recorded: ${e.medication ? 'true' : 'false'}
+   - taken_as_scheduled: ${e.medicationTaken ? 'true' : 'false'}
+   - medication_text: "${e.medication || ''}"
+
+9. History Pattern (history_pattern)
+   - recent_mood_scores: [${h.slice(-7).map(x => x.moodScore).join(', ') || 'no data'}]
+   - recent_sleep_hours: [${h.slice(-7).map(x => x.sleep).join(', ') || 'no data'}]
+   - data_points: ${h.length}
+
+⚠️ Output format: Strict JSON, no additional explanations.
+⚠️ If self_judgment.level is L3, add a care_message field at the end of JSON:
+"Your feelings deserve to be taken seriously. If you are experiencing persistent pain or despair, please consider reaching out to someone you trust or local professional help."`
 
   const handleSubmit = async () => {
     if (!entry.moodText.trim()) { alert(t.enterMood); return }
@@ -550,21 +980,101 @@ Please analyze mood state, physiological correlations, medication adherence, tre
           </div>
         )}
 
-        {/* Analysis Tab */}
+        {/* Analysis Tab - 改为观察Tab */}
         {activeTab === 'analysis' && (
           <div style={cardStyle}>
             {analysis ? <>
-              <div style={{ background: statusStyle(analysis.statusColor).bg, border: `1px solid ${statusStyle(analysis.statusColor).border}`, borderRadius: 16, padding: 20, marginBottom: 24, textAlign: 'center' }}>
-                <div style={{ fontSize: 14, color: statusStyle(analysis.statusColor).text, fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t.status}</div>
-                <div style={{ fontSize: 24, fontWeight: 500, color: statusStyle(analysis.statusColor).text }}>{analysis.status}</div>
+              {/* 状态卡片 - 使用更柔和的颜色 */}
+              <div style={{ 
+                background: analysis.statusColor === 'purple' ? 'rgba(167,139,250,0.15)' : 
+                           analysis.statusColor === 'blue' ? 'rgba(96,165,250,0.15)' : 'rgba(134,239,172,0.15)',
+                border: `1px solid ${analysis.statusColor === 'purple' ? 'rgba(167,139,250,0.3)' : 
+                                     analysis.statusColor === 'blue' ? 'rgba(96,165,250,0.3)' : 'rgba(134,239,172,0.3)'}`,
+                borderRadius: 16, padding: 20, marginBottom: 24, textAlign: 'center' 
+              }}>
+                <div style={{ fontSize: 13, color: '#64748b', marginBottom: 8 }}>{t.status}</div>
+                <div style={{ fontSize: 20, fontWeight: 400, color: '#334155' }}>{analysis.status}</div>
               </div>
-              <div style={{ background: 'rgba(255,255,255,0.4)', borderRadius: 12, padding: 20, marginBottom: 20 }}><h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 12 }}>{t.summary}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: '#334155' }}>{analysis.summary}</p></div>
-              <div style={{ background: 'rgba(255,255,255,0.4)', borderRadius: 12, padding: 20, marginBottom: 20 }}><h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 12 }}>{t.analysis}</h3><p style={{ fontSize: 14, lineHeight: 1.8, color: '#475569', whiteSpace: 'pre-wrap' }}>{analysis.analysis}</p></div>
-              {analysis.warnings?.length > 0 && <div style={{ background: '#fee2e2', borderRadius: 12, padding: 20, marginBottom: 20, border: '1px solid #fca5a5' }}><h3 style={{ fontSize: 14, color: '#b91c1c', marginBottom: 12 }}>{t.warnings}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.warnings.map((w,i) => <li key={i} style={{ fontSize: 14, color: '#dc2626', marginBottom: 8, lineHeight: 1.6 }}>{w}</li>)}</ul></div>}
-              {analysis.suggestions?.length > 0 && <div style={{ background: '#dcfce7', borderRadius: 12, padding: 20, border: '1px solid #86efac' }}><h3 style={{ fontSize: 14, color: '#15803d', marginBottom: 12 }}>{t.suggestions}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.suggestions.map((s,i) => <li key={i} style={{ fontSize: 14, color: '#16a34a', marginBottom: 8, lineHeight: 1.6 }}>{s}</li>)}</ul></div>}
+              
+              {/* 概览 */}
+              <div style={{ background: 'rgba(255,255,255,0.4)', borderRadius: 12, padding: 20, marginBottom: 20 }}>
+                <h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 12 }}>{t.summary}</h3>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: '#334155' }}>{analysis.summary}</p>
+              </div>
+              
+              {/* 基于记录的观察 - 新增温和风格 */}
+              {analysis.observations?.length > 0 && (
+                <div style={{ 
+                  background: 'rgba(167,139,250,0.08)', 
+                  borderRadius: 16, 
+                  padding: 20, 
+                  marginBottom: 20, 
+                  border: '1px solid rgba(167,139,250,0.15)' 
+                }}>
+                  <h3 style={{ fontSize: 14, color: '#7c3aed', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>👁️</span> {t.observation || '基于你的记录'}
+                  </h3>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {analysis.observations.map((obs, i) => (
+                      <li key={i} style={{ 
+                        fontSize: 14, 
+                        color: '#475569', 
+                        marginBottom: 12, 
+                        lineHeight: 1.7,
+                        paddingLeft: 20,
+                        position: 'relative'
+                      }}>
+                        <span style={{ position: 'absolute', left: 0, color: '#a78bfa' }}>·</span>
+                        {obs}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {/* 关怀信息 - 使用温暖的紫色而非红色 */}
+              {analysis.warnings?.length > 0 && (
+                <div style={{ 
+                  background: 'rgba(167,139,250,0.1)', 
+                  borderRadius: 16, 
+                  padding: 20, 
+                  marginBottom: 20, 
+                  border: '1px solid rgba(167,139,250,0.2)' 
+                }}>
+                  <h3 style={{ fontSize: 14, color: '#7c3aed', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>💜</span> {lang === 'zh' ? '想对你说' : 'A note for you'}
+                  </h3>
+                  {analysis.warnings.map((w, i) => (
+                    <p key={i} style={{ 
+                      fontSize: 14, 
+                      color: '#475569', 
+                      marginBottom: i < analysis.warnings.length - 1 ? 12 : 0, 
+                      lineHeight: 1.8 
+                    }}>{w}</p>
+                  ))}
+                </div>
+              )}
+              
+              {/* 原始数据折叠区 */}
+              <details style={{ background: 'rgba(255,255,255,0.3)', borderRadius: 12, padding: 16, border: '1px solid rgba(139,92,246,0.1)' }}>
+                <summary style={{ fontSize: 13, color: '#94a3b8', cursor: 'pointer', userSelect: 'none' }}>
+                  {t.rawData || '📄 查看原始数据'}
+                </summary>
+                <pre style={{ 
+                  marginTop: 16, 
+                  fontSize: 11, 
+                  lineHeight: 1.5, 
+                  color: '#64748b', 
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  background: 'rgba(255,255,255,0.5)',
+                  padding: 12,
+                  borderRadius: 8
+                }}>{analysis.analysis}</pre>
+              </details>
             </> : (
               <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                <div style={{ fontSize: 48, marginBottom: 20 }}>🔮</div>
+                <div style={{ fontSize: 48, marginBottom: 20 }}>👁️</div>
                 <h3 style={{ fontSize: 18, color: '#334155', marginBottom: 12 }}>{apiConfig.apiKey ? t.waiting : t.twoMethods}</h3>
                 {!apiConfig.apiKey && <div style={{ textAlign: 'left', maxWidth: 400, margin: '0 auto' }}>
                   <div style={{ background: 'rgba(139,92,246,0.1)', borderRadius: 12, padding: 20, marginBottom: 16, border: '1px solid rgba(139,92,246,0.2)' }}><h4 style={{ fontSize: 14, color: '#7c3aed', marginBottom: 8 }}>{t.method1}</h4><p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>{t.method1Desc}</p></div>
