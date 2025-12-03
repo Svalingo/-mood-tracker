@@ -6,9 +6,9 @@
 
 body {
   font-family: 'PingFang SC', 'Noto Sans SC', 'SF Pro Display', -apple-system, sans-serif;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
+  background: linear-gradient(135deg, #faf5ff 0%, #fce7f3 50%, #e0e7ff 100%);
   min-height: 100vh;
-  color: #e8e6f0;
+  color: #334155;
 }
 
 @keyframes spin {
@@ -30,12 +30,12 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(139, 92, 246, 0.05);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(139, 92, 246, 0.2);
   border-radius: 3px;
 }
 
@@ -44,5 +44,6 @@ input, textarea, select {
 }
 
 select option {
-  background: #1a1a3e;
+  background: #fff;
+  color: #334155;
 }

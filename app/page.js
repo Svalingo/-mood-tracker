@@ -307,12 +307,77 @@ Please analyze mood state, physiological correlations, medication adherence, tre
     alert(t.copied)
   }
 
-  const statusStyle = c => ({ green: { bg: 'rgba(34,197,94,0.15)', border: '#22c55e', text: '#16a34a' }, yellow: { bg: 'rgba(250,204,21,0.15)', border: '#facc15', text: '#ca8a04' }, orange: { bg: 'rgba(249,115,22,0.15)', border: '#f97316', text: '#ea580c' }, red: { bg: 'rgba(239,68,68,0.15)', border: '#ef4444', text: '#dc2626' }, gray: { bg: 'rgba(156,163,175,0.15)', border: '#9ca3af', text: '#6b7280' } }[c] || { bg: 'rgba(156,163,175,0.15)', border: '#9ca3af', text: '#6b7280' })
+  // --- 🎨 新的美术风格常量 ---
+  // 1. 状态标签：柔和的莫兰迪色背景 + 深色文字
+  const statusStyle = c => ({
+    green: { bg: '#dcfce7', border: '#86efac', text: '#15803d' },
+    yellow: { bg: '#fef9c3', border: '#fde047', text: '#a16207' },
+    orange: { bg: '#ffedd5', border: '#fdba74', text: '#c2410c' },
+    red: { bg: '#fee2e2', border: '#fca5a5', text: '#b91c1c' },
+    gray: { bg: '#f3f4f6', border: '#d1d5db', text: '#4b5563' }
+  }[c] || { bg: '#f3f4f6', border: '#d1d5db', text: '#4b5563' })
 
-  const inputStyle = { width: '100%', padding: 14, background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, color: '#e8e6f0', fontSize: 15 }
-  const btnPrimary = { padding: 16, background: 'linear-gradient(135deg,#8b5cf6,#6366f1)', border: 'none', borderRadius: 12, color: '#fff', fontSize: 16, fontWeight: 500, cursor: 'pointer', width: '100%' }
-  const modal = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }
-  const modalBox = { background: 'linear-gradient(135deg,#1a1a3e,#0f0f23)', borderRadius: 20, padding: 28, width: '100%', maxWidth: 500, border: '1px solid rgba(255,255,255,0.1)', maxHeight: '90vh', overflowY: 'auto' }
+  // 2. 输入框：白底+磨砂+淡紫边框
+  const inputStyle = {
+    width: '100%',
+    padding: '14px 16px',
+    background: 'rgba(255, 255, 255, 0.6)',
+    backdropFilter: 'blur(8px)',
+    border: '1px solid rgba(139, 92, 246, 0.15)',
+    borderRadius: '16px',
+    color: '#475569',
+    fontSize: '15px',
+    outline: 'none',
+    transition: 'all 0.2s ease',
+    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+  }
+
+  // 3. 主按钮：梦幻渐变（紫到粉）
+  const btnPrimary = {
+    padding: '16px',
+    background: 'linear-gradient(135deg, #a78bfa 0%, #f472b6 100%)',
+    border: 'none',
+    borderRadius: '16px',
+    color: '#fff',
+    fontSize: '16px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    width: '100%',
+    boxShadow: '0 4px 12px rgba(167, 139, 250, 0.3)',
+    transition: 'transform 0.1s ease',
+    marginTop: '10px'
+  }
+
+  // 4. 模态框：磨砂玻璃悬浮卡片
+  const modal = {
+    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+    background: 'rgba(255, 255, 255, 0.3)',
+    backdropFilter: 'blur(12px)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    zIndex: 1000, padding: 20
+  }
+
+  const modalBox = {
+    background: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: '24px',
+    padding: '32px',
+    width: '100%', maxWidth: 500,
+    border: '1px solid #fff',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.05)',
+    maxHeight: '90vh', overflowY: 'auto',
+    color: '#334155'
+  }
+
+  // 5. 卡片容器
+  const cardStyle = {
+    background: 'rgba(255, 255, 255, 0.5)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: '24px',
+    padding: '28px',
+    border: '1px solid rgba(255, 255, 255, 0.6)',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)'
+  }
+  // --- 🎨 样式替换结束 ---
 
   if (loading) {
     return (
@@ -331,26 +396,26 @@ Please analyze mood state, physiological correlations, medication adherence, tre
         <div style={{ width: '100%', maxWidth: 400 }}>
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-              <button onClick={toggleLang} style={{ padding: '6px 12px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6, color: '#a0a0c0', fontSize: 12, cursor: 'pointer' }}>
+              <button onClick={toggleLang} style={{ padding: '6px 12px', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 8, color: '#7c3aed', fontSize: 12, cursor: 'pointer' }}>
                 {lang === 'zh' ? 'EN' : '中文'}
               </button>
             </div>
-            <h1 style={{ fontSize: 28, fontWeight: 300, marginBottom: 8, background: 'linear-gradient(90deg,#a78bfa,#60a5fa,#a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t.title}</h1>
-            <p style={{ fontSize: 14, color: '#8b8ba7' }}>{t.subtitle}</p>
+            <h1 style={{ fontSize: 28, fontWeight: 600, marginBottom: 8, background: 'linear-gradient(90deg,#8b5cf6,#ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t.title}</h1>
+            <p style={{ fontSize: 14, color: '#64748b' }}>{t.subtitle}</p>
           </div>
           
-          <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 20, padding: 28, border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h2 style={{ fontSize: 20, marginBottom: 24, textAlign: 'center' }}>{authMode === 'login' ? t.login : t.register}</h2>
+          <div style={cardStyle}>
+            <h2 style={{ fontSize: 20, marginBottom: 24, textAlign: 'center', color: '#334155' }}>{authMode === 'login' ? t.login : t.register}</h2>
             <form onSubmit={handleAuth}>
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#a0a0c0' }}>{t.email}</label>
+                <label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#64748b' }}>{t.email}</label>
                 <input type="email" value={authEmail} onChange={e => setAuthEmail(e.target.value)} required style={inputStyle} />
               </div>
               <div style={{ marginBottom: 24 }}>
-                <label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#a0a0c0' }}>{t.password}</label>
+                <label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#64748b' }}>{t.password}</label>
                 <input type="password" value={authPassword} onChange={e => setAuthPassword(e.target.value)} required minLength={6} style={inputStyle} />
               </div>
-              {authError && <p style={{ color: authError.includes('成功') || authError.includes('Registered') ? '#4ade80' : '#f87171', fontSize: 14, marginBottom: 16, textAlign: 'center' }}>{authError}</p>}
+              {authError && <p style={{ color: authError.includes('成功') || authError.includes('Registered') ? '#16a34a' : '#dc2626', fontSize: 14, marginBottom: 16, textAlign: 'center' }}>{authError}</p>}
               <button type="submit" disabled={authLoading} style={{ ...btnPrimary, opacity: authLoading ? 0.7 : 1 }}>
                 {authLoading ? '...' : (authMode === 'login' ? t.loginBtn : t.registerBtn)}
               </button>
@@ -368,61 +433,62 @@ Please analyze mood state, physiological correlations, medication adherence, tre
 
   return (
     <div style={{ minHeight: '100vh', padding: 20, position: 'relative' }}>
-      <div style={{ position: 'absolute', top: '-50%', right: '-30%', width: '80%', height: '80%', background: 'radial-gradient(circle,rgba(139,92,246,0.08) 0%,transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: '-20%', right: '-20%', width: '60%', height: '60%', background: 'radial-gradient(circle,rgba(236,72,153,0.1) 0%,transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: '-20%', left: '-20%', width: '60%', height: '60%', background: 'radial-gradient(circle,rgba(139,92,246,0.1) 0%,transparent 70%)', pointerEvents: 'none' }} />
       <div style={{ maxWidth: 800, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         
         {/* Header */}
         <header style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <span style={{ fontSize: 12, color: '#6b6b8a' }}>{user.email}</span>
+            <span style={{ fontSize: 12, color: '#64748b' }}>{user.email}</span>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={toggleLang} style={{ padding: '6px 12px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6, color: '#a0a0c0', fontSize: 12, cursor: 'pointer' }}>{lang === 'zh' ? 'EN' : '中文'}</button>
-              <button onClick={handleLogout} style={{ padding: '6px 12px', background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, color: '#f87171', fontSize: 12, cursor: 'pointer' }}>{t.logout}</button>
+              <button onClick={toggleLang} style={{ padding: '6px 12px', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 8, color: '#7c3aed', fontSize: 12, cursor: 'pointer' }}>{lang === 'zh' ? 'EN' : '中文'}</button>
+              <button onClick={handleLogout} style={{ padding: '6px 12px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, color: '#dc2626', fontSize: 12, cursor: 'pointer' }}>{t.logout}</button>
             </div>
           </div>
-          <h1 style={{ fontSize: 28, fontWeight: 300, letterSpacing: '0.1em', marginBottom: 8, background: 'linear-gradient(90deg,#a78bfa,#60a5fa,#a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundSize: '200% 100%', animation: 'shimmer 3s ease-in-out infinite' }}>{t.title}</h1>
-          <p style={{ fontSize: 14, color: '#8b8ba7' }}>{t.subtitle}</p>
+          <h1 style={{ fontSize: 28, fontWeight: 600, letterSpacing: '0.05em', marginBottom: 8, background: 'linear-gradient(90deg,#8b5cf6,#ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t.title}</h1>
+          <p style={{ fontSize: 14, color: '#64748b' }}>{t.subtitle}</p>
         </header>
 
         {/* Navigation */}
-        <nav style={{ display: 'flex', gap: 8, marginBottom: 24, padding: 4, background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)' }}>
+        <nav style={{ display: 'flex', gap: 8, marginBottom: 24, padding: 6, background: 'rgba(255,255,255,0.5)', backdropFilter: 'blur(10px)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.6)' }}>
           {['input','analysis','trends'].map(id => (
-            <button key={id} onClick={() => setActiveTab(id)} style={{ flex: 1, padding: 12, border: 'none', borderRadius: 8, background: activeTab === id ? 'linear-gradient(135deg,rgba(139,92,246,0.3),rgba(59,130,246,0.3))' : 'transparent', color: activeTab === id ? '#fff' : '#8b8ba7', fontSize: 14, cursor: 'pointer' }}>
+            <button key={id} onClick={() => setActiveTab(id)} style={{ flex: 1, padding: 12, border: 'none', borderRadius: 12, background: activeTab === id ? 'linear-gradient(135deg,#a78bfa,#f472b6)' : 'transparent', color: activeTab === id ? '#fff' : '#64748b', fontSize: 14, fontWeight: activeTab === id ? 600 : 400, cursor: 'pointer', transition: 'all 0.2s ease' }}>
               {t.tabs[id]}
             </button>
           ))}
-          <button onClick={() => setShowSettings(true)} style={{ padding: '12px 16px', border: 'none', borderRadius: 8, background: apiConfig.apiKey ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)', color: apiConfig.apiKey ? '#4ade80' : '#f87171', fontSize: 14, cursor: 'pointer' }}>⚙️</button>
+          <button onClick={() => setShowSettings(true)} style={{ padding: '12px 16px', border: 'none', borderRadius: 12, background: apiConfig.apiKey ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)', color: apiConfig.apiKey ? '#16a34a' : '#dc2626', fontSize: 14, cursor: 'pointer' }}>⚙️</button>
         </nav>
 
         {/* Prompt Modal */}
         {showPrompt && <div style={modal}><div style={{...modalBox, maxWidth: 600, display: 'flex', flexDirection: 'column'}}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}><h2 style={{ fontSize: 18, color: '#e8e6f0' }}>{t.saved}</h2><button onClick={() => setShowPrompt(false)} style={{ background: 'none', border: 'none', color: '#8b8ba7', fontSize: 24, cursor: 'pointer' }}>×</button></div>
-          <div style={{ background: 'rgba(139,92,246,0.1)', borderRadius: 12, padding: 16, marginBottom: 20, border: '1px solid rgba(139,92,246,0.2)' }}><p style={{ margin: 0, fontSize: 14, color: '#c4b5fd' }}>{t.copyHint}</p></div>
-          <div style={{ flex: 1, overflow: 'auto', background: 'rgba(0,0,0,0.3)', borderRadius: 12, padding: 16, marginBottom: 20, maxHeight: 300 }}><pre style={{ margin: 0, fontSize: 13, color: '#a0a0c0', whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.7, fontFamily: 'monospace' }}>{prompt}</pre></div>
-          <div style={{ display: 'flex', gap: 12 }}><button onClick={() => copyToClipboard(prompt)} style={{...btnPrimary, flex: 1}}>{t.copy}</button><button onClick={() => { setShowPrompt(false); setActiveTab('trends') }} style={{ padding: '14px 20px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#a0a0c0', cursor: 'pointer' }}>{t.viewTrends}</button></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}><h2 style={{ fontSize: 18, color: '#334155' }}>{t.saved}</h2><button onClick={() => setShowPrompt(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 24, cursor: 'pointer' }}>×</button></div>
+          <div style={{ background: 'rgba(139,92,246,0.1)', borderRadius: 12, padding: 16, marginBottom: 20, border: '1px solid rgba(139,92,246,0.2)' }}><p style={{ margin: 0, fontSize: 14, color: '#7c3aed' }}>{t.copyHint}</p></div>
+          <div style={{ flex: 1, overflow: 'auto', background: 'rgba(0,0,0,0.03)', borderRadius: 12, padding: 16, marginBottom: 20, maxHeight: 300 }}><pre style={{ margin: 0, fontSize: 13, color: '#475569', whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.7, fontFamily: 'monospace' }}>{prompt}</pre></div>
+          <div style={{ display: 'flex', gap: 12 }}><button onClick={() => copyToClipboard(prompt)} style={{...btnPrimary, flex: 1}}>{t.copy}</button><button onClick={() => { setShowPrompt(false); setActiveTab('trends') }} style={{ padding: '14px 20px', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 12, color: '#7c3aed', cursor: 'pointer' }}>{t.viewTrends}</button></div>
         </div></div>}
 
         {/* Settings Modal */}
         {showSettings && <div style={modal}><div style={modalBox}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}><h2 style={{ fontSize: 20, color: '#e8e6f0' }}>{t.apiSettings}</h2><button onClick={() => setShowSettings(false)} style={{ background: 'none', border: 'none', color: '#8b8ba7', fontSize: 24, cursor: 'pointer' }}>×</button></div>
-          <div style={{ marginBottom: 20 }}><label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#a0a0c0' }}>{t.provider}</label><select value={apiConfig.provider} onChange={e => saveApiConfig({...apiConfig, provider: e.target.value, model: API_PROVIDERS[e.target.value].defaultModel})} style={{...inputStyle, cursor: 'pointer'}}>{Object.entries(API_PROVIDERS).map(([k,v]) => <option key={k} value={k}>{v.name}</option>)}</select></div>
-          <div style={{ marginBottom: 20 }}><label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#a0a0c0' }}>{t.apiKey}</label><input type="password" value={apiConfig.apiKey} onChange={e => saveApiConfig({...apiConfig, apiKey: e.target.value})} placeholder={t.apiKeyPlaceholder} style={inputStyle} /></div>
-          <div style={{ marginBottom: 20 }}><label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#a0a0c0' }}>{t.model}</label>{apiConfig.provider === 'custom' ? <input type="text" value={apiConfig.model} onChange={e => saveApiConfig({...apiConfig, model: e.target.value})} style={inputStyle} /> : <select value={apiConfig.model || API_PROVIDERS[apiConfig.provider].defaultModel} onChange={e => saveApiConfig({...apiConfig, model: e.target.value})} style={{...inputStyle, cursor: 'pointer'}}>{API_PROVIDERS[apiConfig.provider].models.map(m => <option key={m} value={m}>{m}</option>)}</select>}</div>
-          {apiConfig.provider === 'custom' && <div style={{ marginBottom: 20 }}><label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#a0a0c0' }}>{t.apiUrl}</label><input type="text" value={apiConfig.customUrl} onChange={e => saveApiConfig({...apiConfig, customUrl: e.target.value})} placeholder="https://..." style={inputStyle} /></div>}
-          <div style={{ padding: 16, background: apiConfig.apiKey ? 'rgba(34,197,94,0.1)' : 'rgba(250,204,21,0.1)', borderRadius: 10, border: `1px solid ${apiConfig.apiKey ? 'rgba(34,197,94,0.3)' : 'rgba(250,204,21,0.3)'}` }}><p style={{ margin: 0, fontSize: 13, color: apiConfig.apiKey ? '#4ade80' : '#fcd34d' }}>{apiConfig.apiKey ? `✓ ${t.configured} ${API_PROVIDERS[apiConfig.provider].name}` : t.notConfigured}</p></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}><h2 style={{ fontSize: 20, color: '#334155' }}>{t.apiSettings}</h2><button onClick={() => setShowSettings(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 24, cursor: 'pointer' }}>×</button></div>
+          <div style={{ marginBottom: 20 }}><label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#64748b' }}>{t.provider}</label><select value={apiConfig.provider} onChange={e => saveApiConfig({...apiConfig, provider: e.target.value, model: API_PROVIDERS[e.target.value].defaultModel})} style={{...inputStyle, cursor: 'pointer'}}>{Object.entries(API_PROVIDERS).map(([k,v]) => <option key={k} value={k}>{v.name}</option>)}</select></div>
+          <div style={{ marginBottom: 20 }}><label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#64748b' }}>{t.apiKey}</label><input type="password" value={apiConfig.apiKey} onChange={e => saveApiConfig({...apiConfig, apiKey: e.target.value})} placeholder={t.apiKeyPlaceholder} style={inputStyle} /></div>
+          <div style={{ marginBottom: 20 }}><label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#64748b' }}>{t.model}</label>{apiConfig.provider === 'custom' ? <input type="text" value={apiConfig.model} onChange={e => saveApiConfig({...apiConfig, model: e.target.value})} style={inputStyle} /> : <select value={apiConfig.model || API_PROVIDERS[apiConfig.provider].defaultModel} onChange={e => saveApiConfig({...apiConfig, model: e.target.value})} style={{...inputStyle, cursor: 'pointer'}}>{API_PROVIDERS[apiConfig.provider].models.map(m => <option key={m} value={m}>{m}</option>)}</select>}</div>
+          {apiConfig.provider === 'custom' && <div style={{ marginBottom: 20 }}><label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#64748b' }}>{t.apiUrl}</label><input type="text" value={apiConfig.customUrl} onChange={e => saveApiConfig({...apiConfig, customUrl: e.target.value})} placeholder="https://..." style={inputStyle} /></div>}
+          <div style={{ padding: 16, background: apiConfig.apiKey ? '#dcfce7' : '#fef9c3', borderRadius: 12, border: `1px solid ${apiConfig.apiKey ? '#86efac' : '#fde047'}` }}><p style={{ margin: 0, fontSize: 13, color: apiConfig.apiKey ? '#15803d' : '#a16207' }}>{apiConfig.apiKey ? `✓ ${t.configured} ${API_PROVIDERS[apiConfig.provider].name}` : t.notConfigured}</p></div>
           <button onClick={() => setShowSettings(false)} style={{...btnPrimary, marginTop: 20}}>{t.done}</button>
         </div></div>}
 
         {/* Input Tab */}
         {activeTab === 'input' && (
-          <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 20, padding: 28, border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={cardStyle}>
             <div style={{ marginBottom: 24 }}>
-              <label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#a0a0c0' }}>{t.date}</label>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: '#64748b' }}>{t.date}</label>
               <input type="date" value={entry.date} onChange={e => setEntry({...entry, date: e.target.value})} style={inputStyle} />
             </div>
 
             <div style={{ marginBottom: 24 }}>
-              <label style={{ display: 'block', marginBottom: 12, fontSize: 13, color: '#a0a0c0' }}>{t.moodScore}</label>
+              <label style={{ display: 'block', marginBottom: 12, fontSize: 13, color: '#64748b' }}>{t.moodScore}</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <span style={{ fontSize: 32 }}>{emojis[entry.moodScore-1]}</span>
                 <input type="range" min="1" max="10" value={entry.moodScore} onChange={e => setEntry({...entry, moodScore: +e.target.value})} style={{ flex: 1, height: 8, borderRadius: 4, background: 'linear-gradient(90deg,#ef4444 0%,#facc15 50%,#22c55e 100%)', WebkitAppearance: 'none', cursor: 'pointer' }} />
@@ -436,16 +502,16 @@ Please analyze mood state, physiological correlations, medication adherence, tre
             </div>
 
             <div style={{ marginBottom: 24, padding: 20, background: 'rgba(168,85,247,0.1)', borderRadius: 16, border: '1px solid rgba(168,85,247,0.2)' }}>
-              <h3 style={{ fontSize: 14, color: '#c4b5fd', marginBottom: 16 }}>{t.medication}</h3>
+              <h3 style={{ fontSize: 14, color: '#7c3aed', marginBottom: 16 }}>{t.medication}</h3>
               <textarea value={entry.medication} onChange={e => setEntry({...entry, medication: e.target.value})} placeholder={t.medPlaceholder} style={{...inputStyle, height: 80, marginBottom: 12, resize: 'vertical'}} />
-              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 14, color: '#a0a0c0' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 14, color: '#64748b' }}>
                 <input type="checkbox" checked={entry.medicationTaken} onChange={e => setEntry({...entry, medicationTaken: e.target.checked})} style={{ width: 18, height: 18, accentColor: '#8b5cf6' }} />
                 {t.medTaken}
               </label>
             </div>
 
             <div style={{ marginBottom: 28 }}>
-              <h3 style={{ fontSize: 14, color: '#a0a0c0', marginBottom: 16 }}>⌚ {t.watchData}</h3>
+              <h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 16 }}>⌚ {t.watchData}</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
                 {[
                   {k:'sleep',l:t.sleep,u:t.hours,i:'🌙',min:0,max:15,step:.5},
@@ -453,27 +519,27 @@ Please analyze mood state, physiological correlations, medication adherence, tre
                   {k:'steps',l:t.steps,u:t.stepUnit,i:'🚶',min:0,max:30000,step:500},
                   {k:'exercise',l:t.exercise,u:t.minutes,i:'🏃',min:0,max:180,step:5}
                 ].map(f => (
-                  <div key={f.k} style={{ padding: 14, background: 'rgba(0,0,0,0.25)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#8b8ba7', marginBottom: 8 }}><span>{f.i}</span>{f.l}</label>
+                  <div key={f.k} style={{ padding: 14, background: 'rgba(255,255,255,0.4)', borderRadius: 12, border: '1px solid rgba(139,92,246,0.1)' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b', marginBottom: 8 }}><span>{f.i}</span>{f.l}</label>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <input type="number" value={entry[f.k]} onChange={e => setEntry({...entry, [f.k]: +e.target.value})} min={f.min} max={f.max} step={f.step} style={{ width: 80, padding: '8px 10px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: '#fff', fontSize: 16, fontWeight: 500 }} />
-                      <span style={{ fontSize: 12, color: '#6b6b8a' }}>{f.u}</span>
+                      <input type="number" value={entry[f.k]} onChange={e => setEntry({...entry, [f.k]: +e.target.value})} min={f.min} max={f.max} step={f.step} style={{ width: 80, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
+                      <span style={{ fontSize: 12, color: '#94a3b8' }}>{f.u}</span>
                     </div>
                   </div>
                 ))}
-                <div style={{ padding: 14, background: 'rgba(0,0,0,0.25)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)', gridColumn: 'span 2' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#8b8ba7', marginBottom: 10 }}><span>😴</span>{t.sleepHR}</label>
+                <div style={{ padding: 14, background: 'rgba(255,255,255,0.4)', borderRadius: 12, border: '1px solid rgba(139,92,246,0.1)', gridColumn: 'span 2' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b', marginBottom: 10 }}><span>😴</span>{t.sleepHR}</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 12, color: '#6b6b8a' }}>{t.min}</span>
-                      <input type="number" value={entry.sleepHRMin} onChange={e => setEntry({...entry, sleepHRMin: +e.target.value})} min={30} max={100} style={{ width: 70, padding: '8px 10px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: '#fff', fontSize: 16, fontWeight: 500 }} />
+                      <span style={{ fontSize: 12, color: '#94a3b8' }}>{t.min}</span>
+                      <input type="number" value={entry.sleepHRMin} onChange={e => setEntry({...entry, sleepHRMin: +e.target.value})} min={30} max={100} style={{ width: 70, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
                     </div>
-                    <span style={{ color: '#6b6b8a' }}>—</span>
+                    <span style={{ color: '#94a3b8' }}>—</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 12, color: '#6b6b8a' }}>{t.max}</span>
-                      <input type="number" value={entry.sleepHRMax} onChange={e => setEntry({...entry, sleepHRMax: +e.target.value})} min={30} max={120} style={{ width: 70, padding: '8px 10px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: '#fff', fontSize: 16, fontWeight: 500 }} />
+                      <span style={{ fontSize: 12, color: '#94a3b8' }}>{t.max}</span>
+                      <input type="number" value={entry.sleepHRMax} onChange={e => setEntry({...entry, sleepHRMax: +e.target.value})} min={30} max={120} style={{ width: 70, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
                     </div>
-                    <span style={{ fontSize: 12, color: '#6b6b8a' }}>bpm</span>
+                    <span style={{ fontSize: 12, color: '#94a3b8' }}>bpm</span>
                   </div>
                 </div>
               </div>
@@ -482,29 +548,29 @@ Please analyze mood state, physiological correlations, medication adherence, tre
             <button onClick={handleSubmit} disabled={isAnalyzing} style={{...btnPrimary, opacity: isAnalyzing ? 0.7 : 1}}>
               {isAnalyzing ? (apiConfig.apiKey ? t.analyzing : t.saving) : (apiConfig.apiKey ? t.submit : t.submitNoApi)}
             </button>
-            {!apiConfig.apiKey && <p style={{ textAlign: 'center', fontSize: 12, color: '#6b6b8a', marginTop: 12 }}>{t.noApiHint}</p>}
+            {!apiConfig.apiKey && <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 12 }}>{t.noApiHint}</p>}
           </div>
         )}
 
         {/* Analysis Tab */}
         {activeTab === 'analysis' && (
-          <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 20, padding: 28, border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={cardStyle}>
             {analysis ? <>
               <div style={{ background: statusStyle(analysis.statusColor).bg, border: `1px solid ${statusStyle(analysis.statusColor).border}`, borderRadius: 16, padding: 20, marginBottom: 24, textAlign: 'center' }}>
                 <div style={{ fontSize: 14, color: statusStyle(analysis.statusColor).text, fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t.status}</div>
                 <div style={{ fontSize: 24, fontWeight: 500, color: statusStyle(analysis.statusColor).text }}>{analysis.status}</div>
               </div>
-              <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: 20, marginBottom: 20 }}><h3 style={{ fontSize: 14, color: '#a0a0c0', marginBottom: 12 }}>{t.summary}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: '#d0d0e8' }}>{analysis.summary}</p></div>
-              <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: 20, marginBottom: 20 }}><h3 style={{ fontSize: 14, color: '#a0a0c0', marginBottom: 12 }}>{t.analysis}</h3><p style={{ fontSize: 14, lineHeight: 1.8, color: '#b0b0d0', whiteSpace: 'pre-wrap' }}>{analysis.analysis}</p></div>
-              {analysis.warnings?.length > 0 && <div style={{ background: 'rgba(239,68,68,0.1)', borderRadius: 12, padding: 20, marginBottom: 20, border: '1px solid rgba(239,68,68,0.2)' }}><h3 style={{ fontSize: 14, color: '#f87171', marginBottom: 12 }}>{t.warnings}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.warnings.map((w,i) => <li key={i} style={{ fontSize: 14, color: '#fca5a5', marginBottom: 8, lineHeight: 1.6 }}>{w}</li>)}</ul></div>}
-              {analysis.suggestions?.length > 0 && <div style={{ background: 'rgba(34,197,94,0.1)', borderRadius: 12, padding: 20, border: '1px solid rgba(34,197,94,0.2)' }}><h3 style={{ fontSize: 14, color: '#4ade80', marginBottom: 12 }}>{t.suggestions}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.suggestions.map((s,i) => <li key={i} style={{ fontSize: 14, color: '#86efac', marginBottom: 8, lineHeight: 1.6 }}>{s}</li>)}</ul></div>}
+              <div style={{ background: 'rgba(255,255,255,0.4)', borderRadius: 12, padding: 20, marginBottom: 20 }}><h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 12 }}>{t.summary}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: '#334155' }}>{analysis.summary}</p></div>
+              <div style={{ background: 'rgba(255,255,255,0.4)', borderRadius: 12, padding: 20, marginBottom: 20 }}><h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 12 }}>{t.analysis}</h3><p style={{ fontSize: 14, lineHeight: 1.8, color: '#475569', whiteSpace: 'pre-wrap' }}>{analysis.analysis}</p></div>
+              {analysis.warnings?.length > 0 && <div style={{ background: '#fee2e2', borderRadius: 12, padding: 20, marginBottom: 20, border: '1px solid #fca5a5' }}><h3 style={{ fontSize: 14, color: '#b91c1c', marginBottom: 12 }}>{t.warnings}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.warnings.map((w,i) => <li key={i} style={{ fontSize: 14, color: '#dc2626', marginBottom: 8, lineHeight: 1.6 }}>{w}</li>)}</ul></div>}
+              {analysis.suggestions?.length > 0 && <div style={{ background: '#dcfce7', borderRadius: 12, padding: 20, border: '1px solid #86efac' }}><h3 style={{ fontSize: 14, color: '#15803d', marginBottom: 12 }}>{t.suggestions}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.suggestions.map((s,i) => <li key={i} style={{ fontSize: 14, color: '#16a34a', marginBottom: 8, lineHeight: 1.6 }}>{s}</li>)}</ul></div>}
             </> : (
               <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                 <div style={{ fontSize: 48, marginBottom: 20 }}>🔮</div>
-                <h3 style={{ fontSize: 18, color: '#d0d0e8', marginBottom: 12 }}>{apiConfig.apiKey ? t.waiting : t.twoMethods}</h3>
+                <h3 style={{ fontSize: 18, color: '#334155', marginBottom: 12 }}>{apiConfig.apiKey ? t.waiting : t.twoMethods}</h3>
                 {!apiConfig.apiKey && <div style={{ textAlign: 'left', maxWidth: 400, margin: '0 auto' }}>
-                  <div style={{ background: 'rgba(139,92,246,0.1)', borderRadius: 12, padding: 20, marginBottom: 16, border: '1px solid rgba(139,92,246,0.2)' }}><h4 style={{ fontSize: 14, color: '#c4b5fd', marginBottom: 8 }}>{t.method1}</h4><p style={{ fontSize: 13, color: '#a0a0c0', margin: 0 }}>{t.method1Desc}</p></div>
-                  <div style={{ background: 'rgba(59,130,246,0.1)', borderRadius: 12, padding: 20, border: '1px solid rgba(59,130,246,0.2)' }}><h4 style={{ fontSize: 14, color: '#93c5fd', marginBottom: 8 }}>{t.method2}</h4><p style={{ fontSize: 13, color: '#a0a0c0', margin: 0 }}>{t.method2Desc}</p><button onClick={() => setShowSettings(true)} style={{ marginTop: 12, padding: '10px 16px', background: 'rgba(59,130,246,0.3)', border: '1px solid rgba(59,130,246,0.4)', borderRadius: 8, color: '#93c5fd', fontSize: 13, cursor: 'pointer' }}>{t.configApi}</button></div>
+                  <div style={{ background: 'rgba(139,92,246,0.1)', borderRadius: 12, padding: 20, marginBottom: 16, border: '1px solid rgba(139,92,246,0.2)' }}><h4 style={{ fontSize: 14, color: '#7c3aed', marginBottom: 8 }}>{t.method1}</h4><p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>{t.method1Desc}</p></div>
+                  <div style={{ background: 'rgba(236,72,153,0.1)', borderRadius: 12, padding: 20, border: '1px solid rgba(236,72,153,0.2)' }}><h4 style={{ fontSize: 14, color: '#db2777', marginBottom: 8 }}>{t.method2}</h4><p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>{t.method2Desc}</p><button onClick={() => setShowSettings(true)} style={{ marginTop: 12, padding: '10px 16px', background: 'linear-gradient(135deg,#a78bfa,#f472b6)', border: 'none', borderRadius: 10, color: '#fff', fontSize: 13, cursor: 'pointer' }}>{t.configApi}</button></div>
                 </div>}
               </div>
             )}
@@ -513,24 +579,24 @@ Please analyze mood state, physiological correlations, medication adherence, tre
 
         {/* Trends Tab */}
         {activeTab === 'trends' && (
-          <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 20, padding: 28, border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h3 style={{ fontSize: 16, marginBottom: 24, color: '#d0d0e8' }}>{t.trendsTitle}</h3>
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 16, marginBottom: 24, color: '#334155' }}>{t.trendsTitle}</h3>
             {entries.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', color: '#6b6b8a' }}>
+              <div style={{ textAlign: 'center', padding: '60px 20px', color: '#94a3b8' }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
                 <p>{t.noData}</p>
               </div>
             ) : (
               <>
                 <div style={{ marginBottom: 32 }}>
-                  <h4 style={{ fontSize: 13, color: '#8b8ba7', marginBottom: 16 }}>{t.moodTrend}</h4>
+                  <h4 style={{ fontSize: 13, color: '#64748b', marginBottom: 16 }}>{t.moodTrend}</h4>
                   <div style={{ height: 200 }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={entries.slice(-14)}>
                         <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4}/><stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/></linearGradient></defs>
-                        <XAxis dataKey="date" tick={{ fill: '#6b6b8a', fontSize: 11 }} tickFormatter={d => d.slice(5)} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
-                        <YAxis domain={[1, 10]} tick={{ fill: '#6b6b8a', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
-                        <Tooltip contentStyle={{ background: 'rgba(15,15,35,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#e8e6f0' }} />
+                        <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: 11 }} tickFormatter={d => d.slice(5)} axisLine={{ stroke: 'rgba(139,92,246,0.2)' }} />
+                        <YAxis domain={[1, 10]} tick={{ fill: '#64748b', fontSize: 11 }} axisLine={{ stroke: 'rgba(139,92,246,0.2)' }} />
+                        <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 12, color: '#334155', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                         <Area type="monotone" dataKey="moodScore" stroke="#8b5cf6" strokeWidth={2} fill="url(#mg)" />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -538,34 +604,34 @@ Please analyze mood state, physiological correlations, medication adherence, tre
                 </div>
 
                 <div style={{ marginBottom: 32 }}>
-                  <h4 style={{ fontSize: 13, color: '#8b8ba7', marginBottom: 16 }}>{t.sleepHrv}</h4>
+                  <h4 style={{ fontSize: 13, color: '#64748b', marginBottom: 16 }}>{t.sleepHrv}</h4>
                   <div style={{ height: 200 }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <ComposedChart data={entries.slice(-14)}>
-                        <XAxis dataKey="date" tick={{ fill: '#6b6b8a', fontSize: 11 }} tickFormatter={d => d.slice(5)} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
-                        <YAxis yAxisId="left" tick={{ fill: '#6b6b8a', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
-                        <YAxis yAxisId="right" orientation="right" tick={{ fill: '#6b6b8a', fontSize: 11 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} />
-                        <Tooltip contentStyle={{ background: 'rgba(15,15,35,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#e8e6f0' }} />
-                        <Bar yAxisId="left" dataKey="sleep" fill="rgba(96,165,250,0.6)" radius={[4,4,0,0]} name={`${t.sleep}(h)`} />
-                        <Line yAxisId="right" type="monotone" dataKey="hrv" stroke="#f472b6" strokeWidth={2} dot={{ fill: '#f472b6', r: 3 }} name="HRV(ms)" />
+                        <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: 11 }} tickFormatter={d => d.slice(5)} axisLine={{ stroke: 'rgba(139,92,246,0.2)' }} />
+                        <YAxis yAxisId="left" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={{ stroke: 'rgba(139,92,246,0.2)' }} />
+                        <YAxis yAxisId="right" orientation="right" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={{ stroke: 'rgba(139,92,246,0.2)' }} />
+                        <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 12, color: '#334155', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                        <Bar yAxisId="left" dataKey="sleep" fill="rgba(139,92,246,0.5)" radius={[4,4,0,0]} name={`${t.sleep}(h)`} />
+                        <Line yAxisId="right" type="monotone" dataKey="hrv" stroke="#ec4899" strokeWidth={2} dot={{ fill: '#ec4899', r: 3 }} name="HRV(ms)" />
                       </ComposedChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
 
                 <div style={{ marginTop: 32 }}>
-                  <button onClick={() => setShowHistory(!showHistory)} style={{ width: '100%', padding: 14, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#a0a0c0', fontSize: 14, cursor: 'pointer' }}>
+                  <button onClick={() => setShowHistory(!showHistory)} style={{ width: '100%', padding: 14, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 12, color: '#7c3aed', fontSize: 14, cursor: 'pointer' }}>
                     {showHistory ? t.hide : t.show} {t.history} ({entries.length} {t.records})
                   </button>
                   {showHistory && (
-                    <div style={{ marginTop: 16, maxHeight: 300, overflowY: 'auto', background: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: 12 }}>
+                    <div style={{ marginTop: 16, maxHeight: 300, overflowY: 'auto', background: 'rgba(255,255,255,0.4)', borderRadius: 12, padding: 12 }}>
                       {entries.slice().reverse().map((e, i) => (
-                        <div key={e.id} style={{ padding: 12, borderBottom: i < entries.length-1 ? '1px solid rgba(255,255,255,0.05)' : 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ color: '#8b8ba7', fontSize: 13 }}>{e.date}</span>
+                        <div key={e.id} style={{ padding: 12, borderBottom: i < entries.length-1 ? '1px solid rgba(139,92,246,0.1)' : 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ color: '#64748b', fontSize: 13 }}>{e.date}</span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                             <span>{emojis[e.moodScore-1]}</span>
-                            <span style={{ color: '#6b6b8a', fontSize: 12 }}>😴{e.sleep?.toFixed(1)}h | 💓{e.hrv?.toFixed(0)} {e.medication ? '| 💊' : ''}</span>
-                            <button onClick={() => deleteEntry(e.id)} style={{ background: 'none', border: 'none', color: '#6b6b8a', fontSize: 14, cursor: 'pointer', padding: 4, opacity: .6 }} title={t.delete}>🗑️</button>
+                            <span style={{ color: '#94a3b8', fontSize: 12 }}>😴{e.sleep?.toFixed(1)}h | 💓{e.hrv?.toFixed(0)} {e.medication ? '| 💊' : ''}</span>
+                            <button onClick={() => deleteEntry(e.id)} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 14, cursor: 'pointer', padding: 4, opacity: .6 }} title={t.delete}>🗑️</button>
                           </div>
                         </div>
                       ))}
@@ -577,7 +643,7 @@ Please analyze mood state, physiological correlations, medication adherence, tre
           </div>
         )}
 
-        <footer style={{ textAlign: 'center', marginTop: 32, padding: 20, color: '#5a5a7a', fontSize: 12, lineHeight: 1.6 }}>
+        <footer style={{ textAlign: 'center', marginTop: 32, padding: 20, color: '#94a3b8', fontSize: 12, lineHeight: 1.6 }}>
           <p>{t.disclaimer}</p>
           <p>{t.disclaimer2}</p>
         </footer>
