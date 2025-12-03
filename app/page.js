@@ -11,7 +11,9 @@ const i18n = {
     tabs: { input: '📝 记录', analysis: '🔍 分析', trends: '📊 趋势' },
     date: '日期', moodScore: '今日情绪评分', moodDesc: '描述你的感受',
     moodPlaceholder: '今天感觉如何？有什么特别的想法或经历？',
-    watchData: 'Apple Watch 数据', sleep: '睡眠时长', hours: '小时', hrv: 'HRV',
+    watchData: 'Apple Watch 数据', 
+    sleep: '睡眠时长', sleepHours: '小时', sleepMins: '分钟',
+    hrv: 'HRV', hrvHint: '心率变异性，反映自主神经调节能力，数值越高通常表示恢复状态越好',
     steps: '步数', stepUnit: '步', exercise: '运动时长', minutes: '分钟',
     sleepHR: '睡眠心率范围', min: '最低', max: '最高',
     medication: '💊 用药记录', medPlaceholder: '记录今天的用药情况，如：碳酸锂 300mg 早晚各一次',
@@ -45,7 +47,9 @@ const i18n = {
     tabs: { input: '📝 Record', analysis: '🔍 Analysis', trends: '📊 Trends' },
     date: 'Date', moodScore: 'Today\'s Mood Score', moodDesc: 'Describe your feelings',
     moodPlaceholder: 'How are you feeling today? Any special thoughts or experiences?',
-    watchData: 'Apple Watch Data', sleep: 'Sleep', hours: 'hrs', hrv: 'HRV',
+    watchData: 'Apple Watch Data', 
+    sleep: 'Sleep', sleepHours: 'h', sleepMins: 'm',
+    hrv: 'HRV', hrvHint: 'Heart Rate Variability - reflects autonomic nervous system regulation. Higher values generally indicate better recovery.',
     steps: 'Steps', stepUnit: 'steps', exercise: 'Exercise', minutes: 'min',
     sleepHR: 'Sleep Heart Rate Range', min: 'Min', max: 'Max',
     medication: '💊 Medication Log', medPlaceholder: 'Record today\'s medication, e.g.: Lithium 300mg twice daily',
@@ -105,23 +109,30 @@ const analyzeWithAI = async (entry, history, config, lang) => {
   const avgSleep = recentHistory.length > 0 ? (recentHistory.reduce((a, h) => a + h.sleep, 0) / recentHistory.length).toFixed(1) : null
   const last7 = history.slice(-7)
   
+  // 睡眠时间格式化
+  const fmtSleep = (hours) => {
+    const h = Math.floor(hours)
+    const m = Math.round((hours - h) * 60)
+    return isZh ? `${h}小时${m > 0 ? m + '分钟' : ''}` : `${h}h${m > 0 ? m + 'm' : ''}`
+  }
+  
   const prompt = isZh ? `请分析以下情绪记录，使用去病理化的语言框架。
 
 【今日数据】
 - 日期：${entry.date}
 - 用户文本："${entry.moodText || '（无）'}"
 - 情绪评分：${entry.moodScore}/10
-- 睡眠：${entry.sleep}小时 | HRV：${entry.hrv}ms | 睡眠心率：${entry.sleepHRMin}-${entry.sleepHRMax}bpm
+- 睡眠：${fmtSleep(entry.sleep)} | HRV：${entry.hrv}ms（心率变异性，反映自主神经调节能力，数值越高通常表示恢复状态越好）| 睡眠心率：${entry.sleepHRMin}-${entry.sleepHRMax}bpm
 - 步数：${entry.steps} | 运动：${entry.exercise}分钟
 - 用药：${entry.medication || '未记录'} | 按时服药：${entry.medicationTaken ? '是' : '否'}
 
 【历史基线（过去30天）】
 - 平均情绪：${avgMood || '无数据'}
-- 平均睡眠：${avgSleep || '无数据'}小时
+- 平均睡眠：${avgSleep ? fmtSleep(parseFloat(avgSleep)) : '无数据'}
 - 数据点数：${recentHistory.length}
 
 【近7天趋势】
-${last7.map(h => `${h.date}: 情绪=${h.moodScore}, 睡眠=${h.sleep}h`).join('\n') || '无历史数据'}
+${last7.map(h => `${h.date}: 情绪=${h.moodScore}, 睡眠=${fmtSleep(h.sleep)}`).join('\n') || '无历史数据'}
 
 【分析框架】
 
@@ -196,17 +207,17 @@ ${last7.map(h => `${h.date}: 情绪=${h.moodScore}, 睡眠=${h.sleep}h`).join('\
 - Date: ${entry.date}
 - User Text: "${entry.moodText || '(none)'}"
 - Mood Score: ${entry.moodScore}/10
-- Sleep: ${entry.sleep}h | HRV: ${entry.hrv}ms | Sleep HR: ${entry.sleepHRMin}-${entry.sleepHRMax}bpm
+- Sleep: ${fmtSleep(entry.sleep)} | HRV: ${entry.hrv}ms (Heart Rate Variability - reflects autonomic nervous system regulation, higher values generally indicate better recovery) | Sleep HR: ${entry.sleepHRMin}-${entry.sleepHRMax}bpm
 - Steps: ${entry.steps} | Exercise: ${entry.exercise}min
 - Medication: ${entry.medication || 'Not recorded'} | Taken: ${entry.medicationTaken ? 'Yes' : 'No'}
 
 【Historical Baseline (past 30 days)】
 - Average Mood: ${avgMood || 'No data'}
-- Average Sleep: ${avgSleep || 'No data'}h
+- Average Sleep: ${avgSleep ? fmtSleep(parseFloat(avgSleep)) : 'No data'}
 - Data Points: ${recentHistory.length}
 
 【Last 7 Days Trend】
-${last7.map(h => `${h.date}: mood=${h.moodScore}, sleep=${h.sleep}h`).join('\n') || 'No historical data'}
+${last7.map(h => `${h.date}: mood=${h.moodScore}, sleep=${fmtSleep(h.sleep)}`).join('\n') || 'No historical data'}
 
 【Analysis Framework】
 
@@ -419,7 +430,7 @@ export default function Home() {
   const [entries, setEntries] = useState([])
   const [entry, setEntry] = useState({
     date: new Date().toISOString().split('T')[0],
-    moodText: '', moodScore: 5, sleep: 7, hrv: 50,
+    moodText: '', moodScore: 5, sleepHours: 7, sleepMins: 0, hrv: 50,
     sleepHRMin: 48, sleepHRMax: 58, steps: 5000, exercise: 30,
     medication: '', medicationTaken: false
   })
@@ -464,6 +475,19 @@ export default function Home() {
     }
   }
 
+  // 睡眠时间转换辅助函数
+  const getSleepTotal = () => (entry.sleepHours || 0) + (entry.sleepMins || 0) / 60
+  const formatSleep = (hours) => {
+    const h = Math.floor(hours)
+    const m = Math.round((hours - h) * 60)
+    return lang === 'zh' ? `${h}小时${m > 0 ? m + '分钟' : ''}` : `${h}h${m > 0 ? m + 'm' : ''}`
+  }
+  const formatSleepShort = (hours) => {
+    const h = Math.floor(hours)
+    const m = Math.round((hours - h) * 60)
+    return `${h}:${m.toString().padStart(2, '0')}`
+  }
+
   const toggleLang = () => {
     const n = lang === 'zh' ? 'en' : 'zh'
     setLang(n)
@@ -503,11 +527,11 @@ export default function Home() {
 - 情绪评分：${e.moodScore}/10
 - 感受：${e.moodText}
 
-【生理数据】睡眠${e.sleep}h | HRV ${e.hrv}ms | 睡眠心率${e.sleepHRMin}-${e.sleepHRMax}bpm | 步数${e.steps} | 运动${e.exercise}min
+【生理数据】睡眠${formatSleep(e.sleep)} | HRV ${e.hrv}ms（心率变异性，反映自主神经调节能力）| 睡眠心率${e.sleepHRMin}-${e.sleepHRMax}bpm | 步数${e.steps} | 运动${e.exercise}分钟
 
 【用药】${e.medication || '未记录'} | 按时服药：${e.medicationTaken ? '是' : '否'}
 
-${h.length ? `【历史】\n${h.slice(-7).map(x => `${x.date}: 情绪${x.moodScore}, 睡眠${x.sleep}h, 用药${x.medication || '未记录'}`).join('\n')}` : '（首条记录）'}
+${h.length ? `【历史】\n${h.slice(-7).map(x => `${x.date}: 情绪${x.moodScore}, 睡眠${formatSleep(x.sleep)}, 用药${x.medication || '未记录'}`).join('\n')}` : '（首条记录）'}
 
 请分析情绪状态、生理关联、用药依从性、趋势变化、预警信号和建议。谢谢！` 
 
@@ -517,11 +541,11 @@ ${h.length ? `【历史】\n${h.slice(-7).map(x => `${x.date}: 情绪${x.moodSco
 - Mood: ${e.moodScore}/10
 - Feeling: ${e.moodText}
 
-【Data】Sleep ${e.sleep}h | HRV ${e.hrv}ms | Sleep HR ${e.sleepHRMin}-${e.sleepHRMax}bpm | Steps ${e.steps} | Exercise ${e.exercise}min
+【Data】Sleep ${formatSleep(e.sleep)} | HRV ${e.hrv}ms (Heart Rate Variability, reflects autonomic nervous system regulation) | Sleep HR ${e.sleepHRMin}-${e.sleepHRMax}bpm | Steps ${e.steps} | Exercise ${e.exercise}min
 
 【Medication】${e.medication || 'Not recorded'} | Taken: ${e.medicationTaken ? 'Yes' : 'No'}
 
-${h.length ? `【History】\n${h.slice(-7).map(x => `${x.date}: mood${x.moodScore}, sleep${x.sleep}h, med${x.medication || 'N/A'}`).join('\n')}` : '(First record)'}
+${h.length ? `【History】\n${h.slice(-7).map(x => `${x.date}: mood${x.moodScore}, sleep${formatSleep(x.sleep)}, med${x.medication || 'N/A'}`).join('\n')}` : '(First record)'}
 
 Please analyze mood state, physiological correlations, medication adherence, trends, warnings, and suggestions. Thanks!`
 
@@ -529,10 +553,12 @@ Please analyze mood state, physiological correlations, medication adherence, tre
     if (!entry.moodText.trim()) { alert(t.enterMood); return }
     setIsAnalyzing(true)
     
+    const sleepTotal = getSleepTotal()
+    
     // 保存到数据库
     const { error } = await supabase.from('mood_entries').insert({
       user_id: user.id, date: entry.date, mood_score: entry.moodScore,
-      mood_text: entry.moodText, sleep: entry.sleep, hrv: entry.hrv,
+      mood_text: entry.moodText, sleep: sleepTotal, hrv: entry.hrv,
       sleep_hr_min: entry.sleepHRMin, sleep_hr_max: entry.sleepHRMax,
       steps: entry.steps, exercise: entry.exercise,
       medication: entry.medication, medication_taken: entry.medicationTaken
@@ -541,12 +567,15 @@ Please analyze mood state, physiological correlations, medication adherence, tre
     if (!error) {
       await loadEntries(user.id)
       
+      // 构建带有计算后睡眠时间的 entry 用于分析
+      const entryForAnalysis = { ...entry, sleep: sleepTotal }
+      
       if (apiConfig.apiKey) {
-        const result = await analyzeWithAI(entry, entries, apiConfig, lang)
+        const result = await analyzeWithAI(entryForAnalysis, entries, apiConfig, lang)
         setAnalysis(result)
         setActiveTab('analysis')
       } else {
-        setGeneratedPrompt(genPrompt(entry, entries))
+        setGeneratedPrompt(genPrompt(entryForAnalysis, entries))
         setShowPrompt(true)
       }
       
@@ -715,20 +744,45 @@ Please analyze mood state, physiological correlations, medication adherence, tre
             <div style={{ marginBottom: 28 }}>
               <h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 16 }}>⌚ {t.watchData}</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 12 }}>
-                {[
-                  {k:'sleep',l:t.sleep,u:t.hours,i:'🌙',min:0,max:15,step:.5},
-                  {k:'hrv',l:t.hrv,u:'ms',i:'💓',min:10,max:150,step:1},
-                  {k:'steps',l:t.steps,u:t.stepUnit,i:'🚶',min:0,max:30000,step:500},
-                  {k:'exercise',l:t.exercise,u:t.minutes,i:'🏃',min:0,max:180,step:5}
-                ].map(f => (
-                  <div key={f.k} style={{ padding: 14, background: 'rgba(255,255,255,0.4)', borderRadius: 12, border: '1px solid rgba(139,92,246,0.1)' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b', marginBottom: 8 }}><span>{f.i}</span>{f.l}</label>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <input type="number" value={entry[f.k]} onChange={e => setEntry({...entry, [f.k]: +e.target.value})} min={f.min} max={f.max} step={f.step} style={{ width: 80, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
-                      <span style={{ fontSize: 12, color: '#94a3b8' }}>{f.u}</span>
-                    </div>
+                {/* 睡眠时长 - 小时和分钟分开 */}
+                <div style={{ padding: 14, background: 'rgba(255,255,255,0.4)', borderRadius: 12, border: '1px solid rgba(139,92,246,0.1)' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b', marginBottom: 8 }}><span>🌙</span>{t.sleep}</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <input type="number" value={entry.sleepHours} onChange={e => setEntry({...entry, sleepHours: +e.target.value})} min={0} max={23} style={{ width: 50, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
+                    <span style={{ fontSize: 12, color: '#94a3b8' }}>{t.sleepHours}</span>
+                    <input type="number" value={entry.sleepMins} onChange={e => setEntry({...entry, sleepMins: +e.target.value})} min={0} max={59} step={5} style={{ width: 50, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
+                    <span style={{ fontSize: 12, color: '#94a3b8' }}>{t.sleepMins}</span>
                   </div>
-                ))}
+                </div>
+                {/* HRV - 带提示 */}
+                <div style={{ padding: 14, background: 'rgba(255,255,255,0.4)', borderRadius: 12, border: '1px solid rgba(139,92,246,0.1)' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b', marginBottom: 4 }}>
+                    <span>💓</span>{t.hrv}
+                    <span title={t.hrvHint} style={{ cursor: 'help', fontSize: 10, color: '#a78bfa', border: '1px solid #a78bfa', borderRadius: '50%', width: 14, height: 14, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>?</span>
+                  </label>
+                  <div style={{ fontSize: 10, color: '#94a3b8', marginBottom: 6, lineHeight: 1.4 }}>{t.hrvHint}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input type="number" value={entry.hrv} onChange={e => setEntry({...entry, hrv: +e.target.value})} min={10} max={150} style={{ width: 80, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
+                    <span style={{ fontSize: 12, color: '#94a3b8' }}>ms</span>
+                  </div>
+                </div>
+                {/* 步数 */}
+                <div style={{ padding: 14, background: 'rgba(255,255,255,0.4)', borderRadius: 12, border: '1px solid rgba(139,92,246,0.1)' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b', marginBottom: 8 }}><span>🚶</span>{t.steps}</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input type="number" value={entry.steps} onChange={e => setEntry({...entry, steps: +e.target.value})} min={0} max={30000} step={500} style={{ width: 80, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
+                    <span style={{ fontSize: 12, color: '#94a3b8' }}>{t.stepUnit}</span>
+                  </div>
+                </div>
+                {/* 运动时长 */}
+                <div style={{ padding: 14, background: 'rgba(255,255,255,0.4)', borderRadius: 12, border: '1px solid rgba(139,92,246,0.1)' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b', marginBottom: 8 }}><span>🏃</span>{t.exercise}</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input type="number" value={entry.exercise} onChange={e => setEntry({...entry, exercise: +e.target.value})} min={0} max={180} step={5} style={{ width: 80, padding: '8px 10px', background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(139,92,246,0.15)', borderRadius: 8, color: '#334155', fontSize: 16, fontWeight: 500 }} />
+                    <span style={{ fontSize: 12, color: '#94a3b8' }}>{t.minutes}</span>
+                  </div>
+                </div>
+                {/* 睡眠心率范围 */}
                 <div style={{ padding: 14, background: 'rgba(255,255,255,0.4)', borderRadius: 12, border: '1px solid rgba(139,92,246,0.1)', gridColumn: 'span 2' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b', marginBottom: 10 }}><span>😴</span>{t.sleepHR}</label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
