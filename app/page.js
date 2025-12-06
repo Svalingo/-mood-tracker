@@ -292,16 +292,24 @@ Output JSON only.`
   ]
 
   const provider = API_PROVIDERS[config.provider]
-  const baseUrl = config.provider === 'custom' ? config.customUrl : provider.baseUrl
   const model = config.model || provider.defaultModel
   
   try {
-    const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${config.apiKey}`, ...provider.extraHeaders }
-    if (config.provider === 'anthropic') { headers['x-api-key'] = config.apiKey; delete headers['Authorization'] }
-    const res = await fetch(baseUrl, { method: 'POST', headers, body: JSON.stringify(provider.formatRequest(messages, model)) })
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        provider: config.provider,
+        apiKey: config.apiKey,
+        model: model,
+        customUrl: config.customUrl,
+        messages: messages
+      })
+    })
     if (!res.ok) throw new Error(`API error: ${res.status}`)
     const data = await res.json()
-    let text = provider.parseResponse(data).replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+    if (data.error) throw new Error(data.error)
+    let text = data.content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
     const parsed = JSON.parse(text)
     
     // 转换新结构到兼容 UI 的格式
