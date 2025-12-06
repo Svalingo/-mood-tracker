@@ -88,27 +88,97 @@ const API_PROVIDERS = {
 }
 
 // ============ 系统级 Prompt ============
-const SYSTEM_PROMPT_ZH = `你是一位温暖的情绪陪伴助手，像一个了解用户的老朋友。
+const SYSTEM_PROMPT_ZH = `你是一位温暖但专业的情绪陪伴助手，具备临床心理学知识，像一个学过心理学的老朋友。
 
-你的风格是：
-- 先看见感受，再看数据
-- 用"我注意到..."而不是"检测到..."
-- 用"你的身体在说..."而不是"生理数据显示..."
-- 好奇而非评判，观察而非诊断
-- 当数据和文字有矛盾时，温柔地提问而非下结论
+【你的双重角色】
+1. 系统层：客观分析数据，识别临床信号（这部分用户不直接看到，但影响你的回应）
+2. 用户层：用温暖、非病理化的语言与用户对话
 
-记住：你是在和一个活生生的人对话，不是在生成报告。`
+【临床状态识别框架】
+- euthymic（平稳期）：情绪稳定，睡眠正常，功能良好
+- depressed（抑郁相）：情绪低落，可能伴随嗜睡（>10h）或失眠，活动量显著减少，兴趣减退
+- hypomanic（轻躁狂）：情绪高涨/易激惹，睡眠需求减少（<5h但精力充沛），思维奔逸，活动增加
+- mixed（混合状态）：同时有抑郁和躁狂特征，最危险的状态
 
-const SYSTEM_PROMPT_EN = `You are a warm emotional companion, like a caring friend who knows the user well.
+【风险等级判定】
+- safe：数据在个人基线范围内，无警示信号
+- watch：出现单一警示信号，或数据有明显波动
+- crisis：多个严重警示信号，或文字中有绝望/自伤表达
 
-Your style:
-- See feelings first, then data
-- Use "I noticed..." not "Detected..."
-- Use "Your body is saying..." not "Physiological data shows..."
-- Be curious not judgmental, observe not diagnose
-- When data conflicts with words, ask gently rather than conclude
+【必须识别的警示信号】
+🚨 抑郁信号：
+- 睡眠 >10小时（嗜睡）
+- 步数 <1000（卧床不起）
+- 情绪 ≤3/10
+- 情绪骤降 ≥3分
 
-Remember: You're talking to a real person, not generating a report.`
+🚨 躁狂信号：
+- 睡眠 <5小时 + 情绪偏高或精力充沛
+- 活动量异常增加
+- 文字中思维跳跃/话多
+
+🚨 混合/危机信号：
+- 情绪极低 + 睡眠极少 + 焦躁不安
+- 文字中有绝望、无意义、自伤相关表达
+
+【身心一致性检验】
+- 一致：语言描述与生理数据匹配（如："很累" + 低HRV + 高睡眠时长）
+- 不一致：可能是觉察不足或躯体化（如："我很好" + 极低活动量 + 睡眠紊乱）
+
+【用户回应原则】
+- 永远不要使用"躁狂""抑郁"等临床术语，改用"能量高/低"
+- 如果用户按时吃药了，一定要肯定他
+- 如果数据异常，不要粉饰，但要温和地指出
+- 如果是常态波动，让用户安心："这只是暂时的浪花"
+- 建议要极其微小、现在就能做
+
+记住：温暖不等于回避问题。真正的关心是诚实地看见，同时给予支持。`
+
+const SYSTEM_PROMPT_EN = `You are a warm but professional mood companion with clinical psychology knowledge, like a friend who studied psychology.
+
+【Your Dual Role】
+1. System layer: Objectively analyze data, identify clinical signals (user doesn't see this directly, but it influences your response)
+2. User layer: Communicate with warm, non-pathologizing language
+
+【Clinical State Recognition Framework】
+- euthymic: Stable mood, normal sleep, good functioning
+- depressed: Low mood, possibly with hypersomnia (>10h) or insomnia, significantly reduced activity, decreased interest
+- hypomanic: Elevated/irritable mood, reduced sleep need (<5h but energetic), racing thoughts, increased activity
+- mixed: Features of both depression and mania, most dangerous state
+
+【Risk Level Criteria】
+- safe: Data within personal baseline, no warning signals
+- watch: Single warning signal, or notable data fluctuation
+- crisis: Multiple severe warning signals, or hopeless/self-harm expressions in text
+
+【Must-Recognize Warning Signals】
+🚨 Depression signals:
+- Sleep >10 hours (hypersomnia)
+- Steps <1000 (bedridden)
+- Mood ≤3/10
+- Mood drop ≥3 points
+
+🚨 Mania signals:
+- Sleep <5 hours + elevated mood or energetic
+- Abnormally increased activity
+- Racing thoughts/verbosity in text
+
+🚨 Mixed/Crisis signals:
+- Very low mood + very little sleep + agitation
+- Hopelessness, meaninglessness, self-harm related expressions
+
+【Mind-Body Concordance Check】
+- Concordant: Language matches physiology (e.g., "exhausted" + low HRV + long sleep)
+- Discordant: Possible poor insight or somatization (e.g., "I'm fine" + very low activity + sleep disruption)
+
+【User Response Principles】
+- NEVER use clinical terms like "manic" "depressed", use "high/low energy" instead
+- If user took medication on time, acknowledge and affirm them
+- If data is abnormal, don't sugarcoat, but point out gently
+- If it's normal fluctuation, reassure: "This is just a temporary wave"
+- Suggestions should be extremely small, doable right now
+
+Remember: Warmth doesn't mean avoiding problems. True care means honestly seeing while providing support.`
 
 const analyzeWithAI = async (entry, history, config, lang) => {
   const isZh = lang === 'zh'
@@ -117,7 +187,13 @@ const analyzeWithAI = async (entry, history, config, lang) => {
   const recentHistory = history.slice(-30)
   const avgMood = recentHistory.length > 0 ? (recentHistory.reduce((a, h) => a + h.moodScore, 0) / recentHistory.length).toFixed(1) : null
   const avgSleep = recentHistory.length > 0 ? (recentHistory.reduce((a, h) => a + h.sleep, 0) / recentHistory.length).toFixed(1) : null
+  const avgHrv = recentHistory.length > 0 ? (recentHistory.reduce((a, h) => a + (h.hrv || 0), 0) / recentHistory.length).toFixed(0) : null
+  const avgSteps = recentHistory.length > 0 ? Math.round(recentHistory.reduce((a, h) => a + (h.steps || 0), 0) / recentHistory.length) : null
   const last7 = history.slice(-7)
+  
+  // 计算近期情绪变化
+  const recentAvgMood = last7.length > 0 ? (last7.reduce((a, h) => a + h.moodScore, 0) / last7.length).toFixed(1) : null
+  const moodChange = recentAvgMood ? (entry.moodScore - parseFloat(recentAvgMood)).toFixed(1) : null
   
   // 睡眠时间格式化
   const fmtSleep = (hours) => {
@@ -126,79 +202,101 @@ const analyzeWithAI = async (entry, history, config, lang) => {
     return isZh ? `${h}小时${m > 0 ? m + '分钟' : ''}` : `${h}h${m > 0 ? m + 'm' : ''}`
   }
   
-  const prompt = isZh ? `这是我今天的记录：
+  const prompt = isZh ? `这是我今天的记录，请帮我分析：
 
 「${entry.moodText || '今天没写什么'}」
 
-情绪打分：${entry.moodScore}/10
-睡了：${fmtSleep(entry.sleep)}
-身体数据：HRV ${entry.hrv}ms，睡眠心率 ${entry.sleepHRMin}-${entry.sleepHRMax}bpm
-活动：走了 ${entry.steps} 步，运动了 ${entry.exercise} 分钟
-用药：${entry.medication || '没记录'}，${entry.medicationTaken ? '按时吃了' : '今天没吃'}
+【今日数据】
+- 情绪：${entry.moodScore}/10 ${moodChange ? `（较近7天${moodChange > 0 ? '+' : ''}${moodChange}分）` : ''}
+- 睡眠：${fmtSleep(entry.sleep)} ${entry.sleep > 10 ? '⚠️' : entry.sleep < 5 ? '⚠️' : ''}
+- HRV：${entry.hrv}ms ${avgHrv ? `（我的均值${avgHrv}ms）` : ''}
+- 睡眠心率：${entry.sleepHRMin}-${entry.sleepHRMax}bpm
+- 活动：${entry.steps}步 ${entry.steps < 1000 ? '⚠️' : ''}，运动${entry.exercise}分钟
+- 用药：${entry.medication || '没记录'}，${entry.medicationTaken ? '✓ 按时吃了' : '✗ 今天没吃'}
 
-最近的我（过去30天）：
-- 平均情绪：${avgMood || '还没有数据'}
-- 平均睡眠：${avgSleep ? fmtSleep(parseFloat(avgSleep)) : '还没有数据'}
+【我的基线（过去30天均值）】
+- 情绪：${avgMood || '无'} | 睡眠：${avgSleep ? fmtSleep(parseFloat(avgSleep)) : '无'} | HRV：${avgHrv || '无'}ms | 步数：${avgSteps || '无'}
 
-这一周：
-${last7.map(h => `${h.date.slice(5)}: 情绪${h.moodScore}分，睡${fmtSleep(h.sleep)}`).join('\n') || '还没有历史数据'}
+【近7天记录】
+${last7.map(h => `${h.date.slice(5)}: 情绪${h.moodScore}, 睡${fmtSleep(h.sleep)}, ${h.steps}步${h.medicationTaken === false ? ', 漏服' : ''}`).join('\n') || '暂无'}
 
 ---
 
-请像朋友一样回应我，用以下JSON格式：
+请输出以下JSON结构：
 
 {
-  "feeling_response": "读完我写的文字，你感受到什么？先回应这个。1-2句，纯粹的共情，不要分析。",
-  
-  "body_check": "我的身体数据在说什么？和我写的文字一致吗？如果一致，说'好消息是...'；如果不一致，温柔地问我'我注意到...，想聊聊吗？'",
-  
-  "pattern": "和这周比，和我的常态比，有什么变化？如果数据太少就说'还需要多几天才能看出规律'",
-  
-  "suggestions": ["基于今天的状态，1-2个小小的、具体的、我现在就能做的事。用'今晚可以试试...'或'明天早上...'这样的语气"],
-  
-  "attention_color": "green/yellow/orange/red（绿=状态不错，黄=有点波动，橙=需要关注，红=请认真对待）",
-  
-  "closing": "一句温暖的结束语，像朋友说晚安那样"
+  "system_analysis": {
+    "risk_level": "safe/watch/crisis",
+    "clinical_state": "euthymic/depressed/hypomanic/mixed",
+    "physiological_discordance": true或false,
+    "medication_adherence": true或false,
+    "detected_symptoms": ["可能的症状，如insomnia/hypersomnia/psychomotor_retardation/decreased_activity等，没有则为空数组"]
+  },
+  "user_response": {
+    "feeling_response": "1-2句纯粹的共情，回应我写的文字中的核心情绪。不要分析，只是'看见'。",
+    "body_check": "根据身心一致性分析，告诉我身体在说什么。如果吃了药，请肯定我。如果有异常不要回避。",
+    "pattern_insight": "和我的基线对比。如果是常态，说'保持得不错'或'这只是暂时的浪花'；如果有显著偏离，诚实指出。",
+    "concerns": ["如果有警示信号，用温和的语言列出，没有则为空数组"],
+    "suggestions": [
+      {
+        "type": "soothing/activating/grounding",
+        "content": "一个极其微小、现在就能做的建议"
+      }
+    ],
+    "closing": "真诚的结束语。状态好就温暖告别，状态不好就说'今天不容易，但我在这里'。",
+    "ui_color": "green/yellow/orange/red"
+  }
 }
 
-只输出JSON，不要其他内容。记住用温暖的、对话式的语言。` 
+只输出JSON。` 
 
-  : `Here's my record for today:
+  : `Here's my record for today, please analyze:
 
 "${entry.moodText || 'Didn\'t write much today'}"
 
-Mood score: ${entry.moodScore}/10
-Sleep: ${fmtSleep(entry.sleep)}
-Body data: HRV ${entry.hrv}ms, sleep HR ${entry.sleepHRMin}-${entry.sleepHRMax}bpm
-Activity: ${entry.steps} steps, ${entry.exercise} min exercise
-Medication: ${entry.medication || 'Not recorded'}, ${entry.medicationTaken ? 'Taken' : 'Not taken'}
+【Today's Data】
+- Mood: ${entry.moodScore}/10 ${moodChange ? `(${moodChange > 0 ? '+' : ''}${moodChange} vs last 7 days)` : ''}
+- Sleep: ${fmtSleep(entry.sleep)} ${entry.sleep > 10 ? '⚠️' : entry.sleep < 5 ? '⚠️' : ''}
+- HRV: ${entry.hrv}ms ${avgHrv ? `(my avg: ${avgHrv}ms)` : ''}
+- Sleep HR: ${entry.sleepHRMin}-${entry.sleepHRMax}bpm
+- Activity: ${entry.steps} steps ${entry.steps < 1000 ? '⚠️' : ''}, ${entry.exercise}min exercise
+- Medication: ${entry.medication || 'Not recorded'}, ${entry.medicationTaken ? '✓ Taken' : '✗ Not taken'}
 
-My recent baseline (past 30 days):
-- Average mood: ${avgMood || 'No data yet'}
-- Average sleep: ${avgSleep ? fmtSleep(parseFloat(avgSleep)) : 'No data yet'}
+【My Baseline (30-day averages)】
+- Mood: ${avgMood || 'N/A'} | Sleep: ${avgSleep ? fmtSleep(parseFloat(avgSleep)) : 'N/A'} | HRV: ${avgHrv || 'N/A'}ms | Steps: ${avgSteps || 'N/A'}
 
-This week:
-${last7.map(h => `${h.date.slice(5)}: mood ${h.moodScore}, sleep ${fmtSleep(h.sleep)}`).join('\n') || 'No history yet'}
+【Last 7 Days】
+${last7.map(h => `${h.date.slice(5)}: mood ${h.moodScore}, sleep ${fmtSleep(h.sleep)}, ${h.steps} steps${h.medicationTaken === false ? ', missed med' : ''}`).join('\n') || 'No data'}
 
 ---
 
-Please respond like a friend, using this JSON format:
+Please output this JSON structure:
 
 {
-  "feeling_response": "After reading what I wrote, what do you sense? Respond to this first. 1-2 sentences of pure empathy, no analysis.",
-  
-  "body_check": "What is my body data saying? Does it match what I wrote? If yes, say 'Good news...'; if not, gently ask 'I noticed..., want to talk about it?'",
-  
-  "pattern": "Compared to this week and my baseline, any changes? If not enough data, say 'Need a few more days to see patterns'",
-  
-  "suggestions": ["Based on today, 1-2 small, specific things I can do right now. Use 'Tonight you could try...' or 'Tomorrow morning...' tone"],
-  
-  "attention_color": "green/yellow/orange/red (green=doing well, yellow=some fluctuation, orange=needs attention, red=please take seriously)",
-  
-  "closing": "A warm closing line, like a friend saying goodnight"
+  "system_analysis": {
+    "risk_level": "safe/watch/crisis",
+    "clinical_state": "euthymic/depressed/hypomanic/mixed",
+    "physiological_discordance": true or false,
+    "medication_adherence": true or false,
+    "detected_symptoms": ["possible symptoms like insomnia/hypersomnia/psychomotor_retardation/decreased_activity, empty array if none"]
+  },
+  "user_response": {
+    "feeling_response": "1-2 sentences of pure empathy, responding to the core emotion in my text. Don't analyze, just 'see'.",
+    "body_check": "Based on mind-body concordance, tell me what my body is saying. If I took medication, acknowledge me. Don't avoid abnormalities.",
+    "pattern_insight": "Compare with my baseline. If normal, say 'keeping steady' or 'just a temporary wave'; if significant deviation, point out honestly.",
+    "concerns": ["If warning signals exist, list them gently. Empty array if none."],
+    "suggestions": [
+      {
+        "type": "soothing/activating/grounding",
+        "content": "One extremely small, doable-right-now suggestion"
+      }
+    ],
+    "closing": "Sincere closing. If good state, warm farewell. If poor state, say 'Today wasn't easy, but I'm here'.",
+    "ui_color": "green/yellow/orange/red"
+  }
 }
 
-Output JSON only. Remember to use warm, conversational language.`
+Output JSON only.`
 
   const messages = [
     { role: 'system', content: isZh ? SYSTEM_PROMPT_ZH : SYSTEM_PROMPT_EN },
@@ -226,8 +324,12 @@ Output JSON only. Remember to use warm, conversational language.`
     let text = data.content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
     const parsed = JSON.parse(text)
     
-    // 新的温暖风格输出
-    const alertLevel = parsed.attention_color || 'green'
+    // 提取系统分析和用户回应
+    const sysAnalysis = parsed.system_analysis || {}
+    const userResp = parsed.user_response || parsed // 兼容旧格式
+    
+    // UI颜色
+    const alertLevel = userResp.ui_color || 'green'
     const colorEmoji = { green: '🟢', yellow: '🟡', orange: '🟠', red: '🔴' }
     const colorLabel = {
       zh: { green: '状态不错', yellow: '有点波动', orange: '需要关注', red: '请认真对待' },
@@ -235,47 +337,69 @@ Output JSON only. Remember to use warm, conversational language.`
     }
     
     // 构建状态文本
-    const statusText = `${colorEmoji[alertLevel]} ${colorLabel[lang][alertLevel]}`
+    const statusText = `${colorEmoji[alertLevel] || '⚪'} ${colorLabel[lang][alertLevel] || ''}`
     
-    // 构建详细分析文本（温暖风格）
-    const buildAnalysisText = (p, lang) => {
+    // 构建详细分析文本
+    const buildAnalysisText = (resp) => {
       let text = ''
       
       // 身体数据观察
-      if (p.body_check) {
-        text += p.body_check
+      if (resp.body_check) {
+        text += resp.body_check
       }
       
       // 规律观察
-      if (p.pattern) {
-        text += '\n\n' + p.pattern
+      if (resp.pattern_insight) {
+        text += '\n\n' + resp.pattern_insight
       }
       
       return text
     }
     
-    // 建议列表
-    const suggestions = parsed.suggestions || []
+    // 建议列表（新格式是对象数组）
+    let suggestions = []
+    if (userResp.suggestions) {
+      if (Array.isArray(userResp.suggestions)) {
+        suggestions = userResp.suggestions.map(s => typeof s === 'string' ? s : s.content)
+      }
+    }
     
-    // 警告列表
+    // 警告/关注点列表
     const warnings = []
-    if (alertLevel === 'red') {
+    
+    // 添加 AI 识别的关注点
+    if (userResp.concerns && userResp.concerns.length > 0) {
+      userResp.concerns.forEach(c => warnings.push(c))
+    }
+    
+    // 根据系统分析的风险等级添加额外警告
+    if (sysAnalysis.risk_level === 'crisis') {
       warnings.push(isZh 
-        ? '今天的感受值得被认真对待。如果需要，请考虑找信任的人聊聊。'
-        : 'Today\'s feelings deserve to be taken seriously. Consider talking to someone you trust if needed.')
+        ? '⚠️ 今天的状态需要被认真对待。如果你感到很难受，请考虑联系你信任的人或专业人士。'
+        : '⚠️ Today\'s state needs to be taken seriously. If you\'re struggling, please consider reaching out to someone you trust or a professional.')
+    }
+    
+    // 根据临床状态添加提示
+    const stateLabels = {
+      zh: { depressed: '低能量', hypomanic: '高能量', mixed: '混合状态' },
+      en: { depressed: 'Low energy', hypomanic: 'High energy', mixed: 'Mixed state' }
     }
     
     return {
       status: statusText,
       statusColor: alertLevel,
-      summary: parsed.feeling_response || '',
-      analysis: buildAnalysisText(parsed, lang),
+      summary: userResp.feeling_response || '',
+      analysis: buildAnalysisText(userResp),
       warnings: warnings,
       suggestions: suggestions,
-      closing: parsed.closing || '',
-      trendDirection: alertLevel === 'red' || alertLevel === 'orange' ? 'down' : 'stable',
-      // 保留原始数据供高级用户查看
-      rawData: parsed
+      closing: userResp.closing || '',
+      trendDirection: sysAnalysis.clinical_state === 'depressed' ? 'down' : 
+                      sysAnalysis.clinical_state === 'hypomanic' ? 'up' : 'stable',
+      // 保留原始数据供高级功能使用
+      rawData: {
+        system: sysAnalysis,
+        user: userResp
+      }
     }
   } catch (e) {
     return { status: isZh ? '分析完成' : 'Analysis complete', statusColor: 'gray', summary: e.message, analysis: '', warnings: [], suggestions: [], trendDirection: 'stable' }
@@ -683,7 +807,7 @@ Please analyze mood state, physiological correlations, medication adherence, tre
               </div>
               <div style={{ background: 'rgba(255,255,255,0.4)', borderRadius: 12, padding: 20, marginBottom: 20 }}><h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 12 }}>{isZh ? '💭 读完你的文字' : '💭 Reading your words'}</h3><p style={{ fontSize: 15, lineHeight: 1.7, color: '#334155' }}>{analysis.summary}</p></div>
               {analysis.analysis && <div style={{ background: 'rgba(255,255,255,0.4)', borderRadius: 12, padding: 20, marginBottom: 20 }}><h3 style={{ fontSize: 14, color: '#64748b', marginBottom: 12 }}>{isZh ? '🫀 身体在说' : '🫀 Your body says'}</h3><p style={{ fontSize: 14, lineHeight: 1.8, color: '#475569', whiteSpace: 'pre-wrap' }}>{analysis.analysis}</p></div>}
-              {analysis.warnings?.length > 0 && <div style={{ background: 'rgba(167,139,250,0.1)', borderRadius: 12, padding: 20, marginBottom: 20, border: '1px solid rgba(167,139,250,0.2)' }}><h3 style={{ fontSize: 14, color: '#7c3aed', marginBottom: 12 }}>{t.warnings}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.warnings.map((w,i) => <li key={i} style={{ fontSize: 14, color: '#6b21a8', marginBottom: 8, lineHeight: 1.6 }}>{w}</li>)}</ul></div>}
+              {analysis.warnings?.length > 0 && <div style={{ background: '#fef3c7', borderRadius: 12, padding: 20, marginBottom: 20, border: '1px solid #fbbf24' }}><h3 style={{ fontSize: 14, color: '#b45309', marginBottom: 12 }}>{isZh ? '⚠️ 值得留意' : '⚠️ Worth noting'}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.warnings.map((w,i) => <li key={i} style={{ fontSize: 14, color: '#92400e', marginBottom: 8, lineHeight: 1.6 }}>{w}</li>)}</ul></div>}
               {analysis.suggestions?.length > 0 && <div style={{ background: '#dcfce7', borderRadius: 12, padding: 20, marginBottom: 20, border: '1px solid #86efac' }}><h3 style={{ fontSize: 14, color: '#15803d', marginBottom: 12 }}>{isZh ? '✨ 小小的建议' : '✨ Small suggestions'}</h3><ul style={{ margin: 0, paddingLeft: 20 }}>{analysis.suggestions.map((s,i) => <li key={i} style={{ fontSize: 14, color: '#16a34a', marginBottom: 8, lineHeight: 1.6 }}>{s}</li>)}</ul></div>}
               {analysis.closing && <div style={{ textAlign: 'center', padding: '16px 20px', color: '#64748b', fontSize: 14, fontStyle: 'italic' }}>{analysis.closing}</div>}
             </> : (
